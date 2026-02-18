@@ -181,10 +181,12 @@ export const Services: React.FC<ServicesProps> = ({ onOpenService }) => {
       className="py-24 relative overflow-hidden"
     >
       {/* Blobs identiques au Hero — continuité visuelle */}
-      <div className="absolute top-0 left-[-10%] w-96 h-96 bg-gold/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob pointer-events-none"></div>
-      <div className="absolute top-0 right-[-10%] w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob pointer-events-none" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute bottom-0 left-20 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob pointer-events-none" style={{ animationDelay: '4s' }}></div>
-
+       {/* Background Blobs Animation */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[+10%] left-[+85%] w-96 h-96 bg-gold/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
+        <div className="absolute top-[+10%] right-[+85%] w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-[+10%] left-[+85%] w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
+      </div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <span className="text-metallic-gold-inline font-medium tracking-widest uppercase text-sm mb-3 block animate-fade-in">

@@ -29,8 +29,8 @@ export const Hero: React.FC = () => {
       {/* Background Blobs Animation */}
       <div className="absolute inset-0 w-full h-full pointer-events-none">
         <div className="absolute top-0 left-[-10%] w-96 h-96 bg-gold/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
-        <div className="absolute top-0 right-[-10%] w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute -bottom-32 left-20 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -120,19 +120,19 @@ export const Hero: React.FC = () => {
                       fallback="N8N"
                     />
                     <TechLogo
-                      src="https://logo.clearbit.com/hostinger.com"
-                      alt="Hostinger"
-                      fallback="H"
-                    />
-                    <TechLogo
-                      src="https://logo.clearbit.com/anthropic.com"
+                      src="/Media/Logos/Logos divers/claude-ai.jpg"
                       alt="Claude AI"
                       fallback="AI"
                     />
                     <TechLogo
-                      src="https://logo.clearbit.com/google.com"
-                      alt="Google"
+                      src="/Media/Logos/Logos divers/Google_Gemini_icon_2025.svg.png"
+                      alt="Google Gemini"
                       fallback="G"
+                    />
+                    <TechLogo
+                      src="/Media/Logos/Logos divers/icone-medias-sociaux-linkedin-3d_466778-2577.avif"
+                      alt="LinkedIn"
+                      fallback="in"
                     />
                   </div>
                 </div>
