@@ -1,15 +1,25 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { servicesData, ServiceData } from './Services';
-import { SectionId } from '../types';
 
 interface ExpertisePageProps {
   onOpenService?: (service: ServiceData) => void;
+  onNavigateService?: (service: ServiceData) => void;
+  onGoToContact?: () => void;
 }
 
-export const ExpertisePage: React.FC<ExpertisePageProps> = ({ onOpenService }) => {
+export const ExpertisePage: React.FC<ExpertisePageProps> = ({ onOpenService, onNavigateService, onGoToContact }) => {
+  const handleServiceClick = (service: ServiceData) => {
+    if (onNavigateService) {
+      onNavigateService(service);
+    } else if (onOpenService) {
+      onOpenService(service);
+    }
+  };
+
   return (
     <div className="min-h-screen pt-32 pb-24">
+
       {/* Hero section */}
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-20">
@@ -25,67 +35,99 @@ export const ExpertisePage: React.FC<ExpertisePageProps> = ({ onOpenService }) =
             Chaque prestation est conçue sur mesure, sans compromis.
           </p>
         </div>
+      </div>
 
-        {/* Grille de services */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {servicesData.map((service) => (
+      {/* Sections verticales alternées */}
+      <div className="space-y-0">
+        {servicesData.map((service, index) => {
+          const isEven = index % 2 === 0;
+          return (
             <div
               key={service.id}
-              className="group relative bg-white/50 backdrop-blur-md border border-white/70 p-8 rounded-2xl hover:bg-white hover:shadow-2xl hover:shadow-gold/10 transition-all duration-500 ease-out hover:-translate-y-2 cursor-pointer"
-              onClick={() => onOpenService?.(service)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && onOpenService?.(service)}
+              className={`py-20 ${isEven ? '' : 'bg-white/40'}`}
+              style={
+                !isEven
+                  ? {
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperGrain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperGrain)' opacity='0.3'/%3E%3C/svg%3E")`,
+                      backgroundSize: '400px 400px',
+                      backgroundBlendMode: 'multiply',
+                    }
+                  : {}
+              }
             >
-              {/* Barre dorée au survol */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-t-2xl"></div>
+              <div className="max-w-7xl mx-auto px-6">
+                <div className={`grid lg:grid-cols-2 gap-12 items-center ${isEven ? '' : 'lg:flex-row-reverse'}`}>
 
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-paper to-white shadow-inner flex items-center justify-center mb-6 text-charcoal group-hover:text-gold group-hover:scale-110 transition-all duration-300">
-                {service.icon}
-              </div>
+                  {/* Icône / Visuel */}
+                  <div className={`flex items-center justify-center ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
+                    <div className="relative">
+                      <div className="w-48 h-48 rounded-3xl bg-gradient-to-br from-charcoal to-[#1E3A5F] flex items-center justify-center shadow-2xl">
+                        <div className="text-gold scale-[3]">
+                          {service.icon}
+                        </div>
+                      </div>
+                      {/* Décoration */}
+                      <div className="absolute -top-4 -right-4 w-20 h-20 bg-gold/10 rounded-2xl -z-10 rotate-12"></div>
+                      <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-blue-100/60 rounded-xl -z-10 -rotate-6"></div>
+                    </div>
+                  </div>
 
-              <h3 className="font-serif text-xl font-semibold text-charcoal mb-3 group-hover:text-metallic-gold transition-colors">
-                {service.title}
-              </h3>
+                  {/* Contenu texte */}
+                  <div className={`space-y-6 ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
+                    <span className="text-metallic-gold-inline font-medium tracking-widest uppercase text-sm">
+                      Prestation #{index + 1}
+                    </span>
 
-              <p className="text-steel font-light leading-relaxed text-sm mb-5">
-                {service.fullDescription}
-              </p>
+                    <h2 className="font-serif text-4xl font-bold text-metallic-navy leading-tight">
+                      {service.title}
+                    </h2>
 
-              {/* Bénéfices */}
-              <ul className="space-y-2 mb-6">
-                {service.benefits.slice(0, 3).map((b, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-charcoal/70">
-                    <CheckCircle2 size={14} className="text-safe-green shrink-0 mt-0.5" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+                    <p className="text-steel text-lg leading-relaxed">
+                      {service.fullDescription || service.description}
+                    </p>
 
-              <div className="flex items-center gap-1 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-metallic-gold-inline">Découvrir en détail</span>
-                <ArrowRight size={14} className="text-gold" />
+                    <ul className="space-y-3">
+                      {service.benefits.map((b, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <CheckCircle2 size={18} className="text-safe-green shrink-0 mt-0.5" />
+                          <span className="text-charcoal/80">{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button
+                      onClick={() => handleServiceClick(service)}
+                      className="inline-flex items-center gap-2 px-6 py-3 btn-metallic-dark text-white rounded-full font-medium shadow-lg hover:-translate-y-0.5 transition-transform"
+                    >
+                      Découvrir en détail <ArrowRight size={16} />
+                    </button>
+                  </div>
+
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
-        {/* CTA section */}
-        <div className="text-center bg-charcoal text-white rounded-3xl p-12 relative overflow-hidden">
+      {/* CTA section */}
+      <div className="max-w-7xl mx-auto px-6 mt-20">
+        <div className="cta-leather text-center bg-charcoal text-white rounded-3xl p-12 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"></div>
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
-            Un projet en tête ?
-          </h2>
-          <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
-            Parlons de vos besoins concrets. La première consultation est gratuite.
-          </p>
-          <a
-            href={`#${SectionId.CONTACT}`}
-            className="inline-flex items-center gap-2 px-8 py-4 btn-metallic-gold rounded-full font-semibold shadow-xl"
-          >
-            Démarrer un projet <ArrowRight size={18} />
-          </a>
+          <div className="relative z-10">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
+              Un projet en tête ?
+            </h2>
+            <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
+              Parlons de vos besoins concrets. La première consultation est gratuite.
+            </p>
+            <button
+              onClick={onGoToContact}
+              className="inline-flex items-center gap-2 px-8 py-4 btn-metallic-gold rounded-full font-semibold shadow-xl"
+            >
+              Lancer votre projet <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

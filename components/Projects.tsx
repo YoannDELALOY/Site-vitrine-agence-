@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionId } from '../types';
 
@@ -141,8 +141,13 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => (
   <div
-    className="group relative rounded-2xl overflow-hidden bg-obsidian border border-white/10 hover:border-gold/50 transition-all duration-500 hover:-translate-y-2 shadow-xl cursor-pointer flex-shrink-0 snap-start"
-    style={{ width: '300px', minWidth: '300px' }}
+    className="group relative rounded-2xl overflow-hidden border border-white/10 hover:border-gold/40 transition-all duration-500 hover:-translate-y-2 shadow-xl cursor-pointer flex-shrink-0 snap-start"
+    style={{
+      width: 'min(85vw, 300px)',
+      minWidth: 'min(85vw, 300px)',
+      background: '#0D1B2A',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+    }}
     onClick={() => onClick(project)}
   >
     <div className="h-48 overflow-hidden relative">
@@ -155,14 +160,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => (
     </div>
 
     <div className="p-6 relative">
-      <div className="absolute top-0 right-6 -translate-y-1/2 bg-gold text-charcoal p-2.5 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:-translate-y-1/2 transition-all duration-300 shadow-lg z-20">
+      <div className="absolute top-0 right-6 -translate-y-1/2 btn-metallic-gold text-charcoal p-2.5 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:-translate-y-1/2 transition-all duration-300 shadow-lg z-20">
         <ExternalLink size={16} />
       </div>
 
       <div className="text-xs font-medium text-metallic-gold-inline mb-1 uppercase tracking-wider">
         {project.category}
       </div>
-      <h3 className="font-serif text-lg font-bold mb-2 group-hover:text-gold transition-colors text-white">
+      <h3 className="font-serif text-lg font-bold mb-2 text-metallic-silver group-hover:text-white transition-colors">
         {project.title}
       </h3>
       <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">
@@ -185,28 +190,47 @@ interface ProjectsProps {
 }
 
 export const Projects: React.FC<ProjectsProps> = ({ onOpenProject }) => {
-  const [current, setCurrent] = useState(0);
-  const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
 
-  const scrollTo = (idx: number) => {
-    const clamped = Math.max(0, Math.min(idx, projectsData.length - 1));
-    setCurrent(clamped);
-    const el = scrollRef.current?.children[clamped] as HTMLElement;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
-  };
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => el.removeEventListener('scroll', updateScrollState);
+  }, [updateScrollState]);
+
+  const scrollLeft = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: -el.offsetWidth * 0.8, behavior: 'smooth' });
+  }, []);
+
+  const scrollRight = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: el.offsetWidth * 0.8, behavior: 'smooth' });
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.changedTouches[0].clientX;
   };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const delta = touchStartX.current - touchEndX.current;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(delta) > 50) {
-      scrollTo(delta > 0 ? current + 1 : current - 1);
+      const el = scrollRef.current;
+      if (el) el.scrollBy({ left: delta > 0 ? 260 : -260, behavior: 'smooth' });
     }
   };
 
@@ -227,35 +251,39 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenProject }) => {
           </h2>
         </div>
 
-        {/* Carrousel avec flèches overlay */}
+        {/* Carrousel scroll-based */}
         <div className="relative">
           {/* Flèche gauche */}
-          {current > 0 && (
+          {canScrollLeft && (
             <button
-              onClick={() => scrollTo(current - 1)}
+              onClick={scrollLeft}
               className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all shadow-lg"
-              aria-label="Projet précédent"
+              aria-label="Défiler à gauche"
             >
               <ChevronLeft size={22} />
             </button>
           )}
 
           {/* Flèche droite */}
-          {current < projectsData.length - 1 && (
+          {canScrollRight && (
             <button
-              onClick={() => scrollTo(current + 1)}
+              onClick={scrollRight}
               className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all shadow-lg"
-              aria-label="Projet suivant"
+              aria-label="Défiler à droite"
             >
               <ChevronRight size={22} />
             </button>
           )}
 
-          {/* Carrousel scroll natif */}
+          {/* Conteneur scroll natif */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+            className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory px-4 sm:px-0 justify-start"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
+            } as React.CSSProperties}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >

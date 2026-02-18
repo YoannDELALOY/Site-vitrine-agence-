@@ -179,14 +179,11 @@ export const Services: React.FC<ServicesProps> = ({ onOpenService }) => {
     <section
       id={SectionId.SERVICES}
       className="py-24 relative overflow-hidden"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperGrain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperGrain)' opacity='0.45'/%3E%3C/svg%3E"), linear-gradient(to bottom, #ffffff, rgba(251,243,230,0.5), #ffffff)`,
-        backgroundBlendMode: 'multiply, normal',
-        backgroundSize: '400px 400px, 100% 100%'
-      }}
     >
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
+      {/* Blobs identiques au Hero — continuité visuelle */}
+      <div className="absolute top-0 left-[-10%] w-96 h-96 bg-gold/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob pointer-events-none"></div>
+      <div className="absolute top-0 right-[-10%] w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob pointer-events-none" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute bottom-0 left-20 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob pointer-events-none" style={{ animationDelay: '4s' }}></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20 max-w-3xl mx-auto">
@@ -234,11 +231,11 @@ export const Services: React.FC<ServicesProps> = ({ onOpenService }) => {
             </div>
           </div>
 
-          {/* Navigation mobile */}
+          {/* Navigation mobile — flèches masquées, dots uniquement */}
           <div className="flex items-center justify-center gap-4 mt-8">
             <button
               onClick={prev}
-              className="p-3 rounded-full btn-metallic-dark text-white shadow-lg"
+              className="hidden md:flex p-3 rounded-full btn-metallic-dark text-white shadow-lg"
               aria-label="Précédent"
             >
               <ChevronLeft size={20} />
@@ -257,7 +254,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenService }) => {
 
             <button
               onClick={next}
-              className="p-3 rounded-full btn-metallic-dark text-white shadow-lg"
+              className="hidden md:flex p-3 rounded-full btn-metallic-dark text-white shadow-lg"
               aria-label="Suivant"
             >
               <ChevronRight size={20} />

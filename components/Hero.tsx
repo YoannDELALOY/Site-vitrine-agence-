@@ -2,11 +2,29 @@ import React from 'react';
 import { ArrowRight, Sparkles, Phone } from 'lucide-react';
 import { SectionId } from '../types';
 
+const TechLogo: React.FC<{ src: string; alt: string; fallback: string }> = ({ src, alt, fallback }) => (
+  <div className="w-8 h-8 rounded-lg bg-white shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden" title={alt}>
+    <img
+      src={src}
+      alt={alt}
+      className="w-6 h-6 object-contain"
+      onError={(e) => {
+        const target = e.currentTarget;
+        target.style.display = 'none';
+        const parent = target.parentElement;
+        if (parent) {
+          parent.innerHTML = `<span class="text-xs font-bold text-charcoal/60">${fallback}</span>`;
+        }
+      }}
+    />
+  </div>
+);
+
 export const Hero: React.FC = () => {
   return (
     <section
       id={SectionId.HOME}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-16"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 md:pb-16"
     >
       {/* Background Blobs Animation */}
       <div className="absolute inset-0 w-full h-full pointer-events-none">
@@ -15,10 +33,10 @@ export const Hero: React.FC = () => {
         <div className="absolute -bottom-32 left-20 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
 
         {/* Left: Text Content */}
-        <div className="space-y-8 text-center md:text-left">
+        <div className="space-y-6 md:space-y-8 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border border-gold/20 animate-fade-in">
             <Sparkles size={14} className="text-gold" />
             <span className="text-xs font-semibold tracking-wider uppercase text-charcoal/80">
@@ -52,7 +70,7 @@ export const Hero: React.FC = () => {
 
             <a
               href="tel:+33647344364"
-              className="flex items-center gap-2 px-6 py-4 text-charcoal font-medium hover:text-gold transition-colors border border-charcoal/20 rounded-full hover:border-gold/50"
+              className="flex items-center gap-2 px-6 py-3 md:py-4 text-charcoal font-medium hover:text-gold transition-colors border border-charcoal/20 rounded-full hover:border-gold/50"
             >
               <Phone size={16} className="text-gold" />
               06 47 34 43 64
@@ -60,14 +78,14 @@ export const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Right: Abstract Visual */}
+        {/* Right: Abstract Visual — masqué sur mobile */}
         <div className="relative h-[480px] w-full hidden md:block animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative w-80 h-96">
 
-              {/* Carte principale */}
+              {/* Carte principale (blanche) */}
               <div
-                className="absolute top-0 right-0 w-64 h-80 rounded-2xl z-20 transform rotate-3 hover:rotate-0 transition-all duration-700 shadow-2xl p-6 flex flex-col justify-between border-l-4 border-gold"
+                className="absolute top-0 right-0 w-64 h-80 rounded-2xl z-20 transform rotate-3 hover:rotate-0 transition-all duration-700 shadow-2xl p-6 flex flex-col justify-between"
                 style={{
                   background: 'rgba(255,250,240,0.92)',
                   backdropFilter: 'blur(16px)',
@@ -91,10 +109,34 @@ export const Hero: React.FC = () => {
                   </div>
                   <div className="px-2 py-1 bg-green-100 text-safe-green text-xs rounded-full font-medium">En ligne</div>
                 </div>
+
+                {/* Logos technos */}
                 <div className="space-y-3">
-                  <div className="h-2 w-3/4 bg-gray-100 rounded-full"></div>
-                  <div className="h-2 w-1/2 bg-gray-100 rounded-full"></div>
+                  <p className="text-xs text-steel/70 font-medium uppercase tracking-wider">Stack & Outils</p>
+                  <div className="flex gap-2 items-center flex-wrap">
+                    <TechLogo
+                      src="https://logo.clearbit.com/n8n.io"
+                      alt="N8N"
+                      fallback="N8N"
+                    />
+                    <TechLogo
+                      src="https://logo.clearbit.com/hostinger.com"
+                      alt="Hostinger"
+                      fallback="H"
+                    />
+                    <TechLogo
+                      src="https://logo.clearbit.com/anthropic.com"
+                      alt="Claude AI"
+                      fallback="AI"
+                    />
+                    <TechLogo
+                      src="https://logo.clearbit.com/google.com"
+                      alt="Google"
+                      fallback="G"
+                    />
+                  </div>
                 </div>
+
                 <div className="font-serif font-bold text-charcoal">
                   <span className="text-3xl text-metallic-gold">+145%</span>
                   <br />
@@ -102,7 +144,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
 
-              {/* Carte secondaire */}
+              {/* Carte secondaire (sombre) */}
               <div className="absolute bottom-4 left-[-20px] w-56 h-64 rounded-2xl z-10 transform -rotate-6 shadow-xl bg-charcoal text-white p-6 border border-white/10">
                 <div className="h-full flex flex-col justify-between opacity-90">
                   <Sparkles className="text-gold" />

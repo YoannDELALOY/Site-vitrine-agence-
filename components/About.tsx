@@ -45,29 +45,27 @@ export const About: React.FC = () => {
               "Une relation de proximité réelle (Loiret & alentours)",
               "L'innovation IA au service de votre rentabilité"
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 justify-start">
+              <div key={i} className="flex items-center gap-3 justify-center md:justify-start">
                 <CheckCircle2 className="text-safe-green shrink-0" size={20} />
                 <span className="text-charcoal font-medium">{item}</span>
               </div>
             ))}
           </div>
 
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-start gap-6 border-t border-gray-100 mt-8">
-            <div className="flex items-center gap-4">
+          {/* Bloc fondateur centré sur mobile */}
+          <div className="pt-8 flex flex-col items-center md:items-start gap-4 border-t border-gray-100 mt-8">
+            <div className="flex flex-col items-center md:flex-row md:items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-charcoal overflow-hidden border-2 border-gold shadow-lg shrink-0">
                 <img src="https://picsum.photos/200/200?grayscale" alt="Yoann Delaloy" className="w-full h-full object-cover" />
               </div>
-              <div className="text-center sm:text-left">
+              <div className="text-center md:text-left">
                 <div className="font-serif text-xl font-bold text-charcoal">Yoann Delaloy</div>
                 <div className="text-sm text-metallic-gold-inline font-medium uppercase tracking-wide">Fondateur & Lead Architect</div>
               </div>
             </div>
-            <div className="h-10 w-px bg-gray-200 hidden sm:block"></div>
-            <div className="text-center sm:text-left">
-              <div className="flex items-start gap-2 text-charcoal font-semibold font-serif text-sm">
-                <MapPin size={16} className="text-gold mt-0.5 shrink-0" />
-                <span>1 rue Auguste Grivot<br />Châteauneuf-sur-Loire, 45110</span>
-              </div>
+            <div className="flex items-start gap-2 text-charcoal font-semibold font-serif text-sm text-center md:text-left justify-center md:justify-start">
+              <MapPin size={16} className="text-gold mt-0.5 shrink-0" />
+              <span>1 rue Auguste Grivot<br />Châteauneuf-sur-Loire, 45110</span>
             </div>
           </div>
         </div>
