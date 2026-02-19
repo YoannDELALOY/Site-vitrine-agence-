@@ -49,7 +49,7 @@ export const Hero: React.FC = () => {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
     observer.observe(el);
