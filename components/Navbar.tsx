@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone } from 'lucide-react';
 import { SectionId } from '../types';
 
-type NavPage = 'expertise' | 'realisations' | 'agence' | 'home';
+type NavPage = 'expertise' | 'realisations' | 'blog' | 'agence' | 'home';
 
 interface NavbarProps {
   onNavigate?: (page: NavPage) => void;
@@ -33,6 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
   const navLinks: { label: string; page: NavPage }[] = [
     { label: 'Expertise', page: 'expertise' },
     { label: 'Réalisations', page: 'realisations' },
+    { label: 'Blog', page: 'blog' },
     { label: "L'Agence", page: 'agence' },
   ];
 
@@ -45,6 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
       const sectionMap: Record<NavPage, string> = {
         expertise: `#${SectionId.SERVICES}`,
         realisations: `#${SectionId.PROJECTS}`,
+        blog: `#${SectionId.PROJECTS}`,
         agence: `#${SectionId.ABOUT}`,
         home: `#${SectionId.HOME}`,
       };
@@ -77,14 +79,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
       className={`fixed z-50 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]
         ${
           isScrolled
-            ? 'top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-auto md:min-w-[820px] rounded-full glass-panel px-6 py-3 shadow-2xl shadow-charcoal/5 border border-white/60'
+            ? 'top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-auto md:min-w-[900px] rounded-full glass-panel px-6 py-3 shadow-2xl shadow-charcoal/5 border border-white/60'
             : 'top-0 left-0 right-0 w-full px-6 py-6 bg-transparent'
         }
       `}
     >
       <div className={`flex items-center justify-between ${isScrolled ? '' : 'max-w-7xl mx-auto'}`}>
 
-        {/* Logo — une seule instance */}
+        {/* Logo */}
         <button onClick={handleLogoClick} className="flex items-center group shrink-0 focus:outline-none">
           <img
             src="/logos/Design sans titre (84).png"
@@ -99,10 +101,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
             <button
               key={link.label}
               onClick={() => handleNavClick(link.page)}
-              className={`text-sm font-medium transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:h-[1px] after:bg-gold after:transition-all
+              className={`text-sm font-medium relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:h-[1px] after:bg-gold after:transition-all hover-metallic-gold
                 ${isActivePage(link.page)
-                  ? 'text-gold after:w-full'
-                  : 'text-charcoal/80 hover:text-gold after:w-0 hover:after:w-full'
+                  ? 'text-metallic-gold-inline after:w-full'
+                  : 'text-charcoal/80 after:w-0 hover:after:w-full'
                 }`}
             >
               {link.label}
@@ -120,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
           </a>
         </div>
 
-        {/* Mobile Toggle — un seul bouton, une seule icône */}
+        {/* Mobile Toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden p-2 text-charcoal hover:text-gold transition-colors"
@@ -131,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage = 'home'
         </button>
       </div>
 
-      {/* Menu mobile — dropdown compact sous la navbar (pas plein écran) */}
+      {/* Menu mobile — dropdown compact */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 mt-2 mx-3 rounded-2xl glass-panel border border-white/70 shadow-2xl overflow-hidden animate-fade-in">
           <div className="flex flex-col p-4 space-y-1 max-h-[80vh] overflow-y-auto">

@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import { X, CheckCircle2, AlertCircle, ArrowRight, Tag, User, Calendar } from 'lucide-react';
+import { X, CheckCircle2, AlertCircle, ArrowRight, Tag, User, Calendar, ExternalLink, BookOpen } from 'lucide-react';
 import { ProjectData } from './Projects';
 import { SectionId } from '../types';
 
 interface ProjectModalProps {
   project: ProjectData | null;
   onClose: () => void;
+  onNavigateBlog?: (projectId: string) => void;
 }
 
-export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
+export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, onNavigateBlog }) => {
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -127,13 +128,34 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             <p className="text-steel text-sm mb-4 text-center">
               Un projet similaire ? Discutons-en.
             </p>
-            <a
-              href={`#${SectionId.CONTACT}`}
-              onClick={onClose}
-              className="w-full btn-metallic-dark text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
-            >
-              Démarrer mon projet <ArrowRight size={18} />
-            </a>
+            <div className="flex flex-col gap-3">
+              {project.url && (
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full btn-metallic-gold font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                >
+                  Voir le site <ExternalLink size={16} />
+                </a>
+              )}
+              <button
+                onClick={() => {
+                  onClose();
+                  onNavigateBlog?.(project.id);
+                }}
+                className="w-full btn-metallic-dark text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+              >
+                Lire l'article de blog <BookOpen size={16} />
+              </button>
+              <a
+                href={`#${SectionId.CONTACT}`}
+                onClick={onClose}
+                className="w-full border border-charcoal/20 text-charcoal font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:border-gold/50 hover:text-gold transition-all"
+              >
+                Démarrer mon projet <ArrowRight size={18} />
+              </a>
+            </div>
           </div>
         </div>
 

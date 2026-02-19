@@ -1,9 +1,11 @@
 import React from 'react';
 import { Linkedin, Github, Instagram, Facebook, ExternalLink, Mail, Phone, MapPin } from 'lucide-react';
 import { SectionId } from '../types';
+import { servicesData, ServiceData } from './Services';
 
 interface FooterProps {
   onShowLegal?: (page: 'mentions' | 'privacy') => void;
+  onNavigateService?: (service: ServiceData) => void;
 }
 
 const socialLinks = [
@@ -29,20 +31,12 @@ const socialLinks = [
   }
 ];
 
-const navLinks = [
-  { label: 'Accueil', href: `#${SectionId.HOME}` },
-  { label: 'Expertise', href: `#${SectionId.SERVICES}` },
-  { label: 'Réalisations', href: `#${SectionId.PROJECTS}` },
-  { label: "L'Agence", href: `#${SectionId.ABOUT}` },
-  { label: 'Contact', href: `#${SectionId.CONTACT}` },
-];
-
-export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
+export const Footer: React.FC<FooterProps> = ({ onShowLegal, onNavigateService }) => {
   return (
     <footer className="bg-charcoal text-white border-t border-white/5">
 
-      {/* Footer principal — 2 colonnes sur mobile, 4 sur desktop */}
-      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+      {/* Footer principal — 2 colonnes sur mobile, 3 sur desktop */}
+      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
 
         {/* Colonne 1 — Logo & tagline */}
         <div className="col-span-2 lg:col-span-1">
@@ -68,7 +62,7 @@ export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={s.label}
-                className="p-2 bg-white/5 rounded-full hover:bg-gold hover:text-charcoal transition-all border border-white/10"
+                className="p-2 bg-white/5 rounded-full hover-bg-metallic transition-all border border-white/10"
                 aria-label={s.label}
               >
                 {s.icon}
@@ -80,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
               target="_blank"
               rel="noopener noreferrer"
               title="Malt"
-              className="p-2 bg-white/5 rounded-full hover:bg-gold hover:text-charcoal transition-all border border-white/10"
+              className="p-2 bg-white/5 rounded-full hover-bg-metallic transition-all border border-white/10"
               aria-label="Malt"
             >
               <ExternalLink size={18} />
@@ -88,47 +82,24 @@ export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
           </div>
         </div>
 
-        {/* Colonne 2 — Navigation */}
-        <div>
-          <h4 className="text-sm font-semibold uppercase tracking-widest text-gold mb-5">Navigation</h4>
-          <ul className="space-y-3">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  className="text-gray-400 hover:text-gold transition-colors text-sm"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <a
-                href="https://yoanndelaloy.fr/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gold transition-colors text-sm flex items-center gap-1"
-              >
-                Portfolio <ExternalLink size={12} />
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Colonne 3 — Services */}
+        {/* Colonne 2 — Expertises (cliquables) */}
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-widest text-gold mb-5">Expertises</h4>
-          <ul className="space-y-3 text-gray-400 text-sm">
-            <li>Sites Web Vivants</li>
-            <li>IA Compagnon</li>
-            <li>Automatisation Sereine</li>
-            <li>Outils Métiers</li>
-            <li>Clarté Stratégique</li>
-            <li>Gardien de Données</li>
+          <ul className="space-y-3">
+            {servicesData.map((service) => (
+              <li key={service.id}>
+                <button
+                  onClick={() => onNavigateService?.(service)}
+                  className="text-gray-400 hover-metallic-gold transition-all text-sm text-left"
+                >
+                  {service.title}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Colonne 4 — Contact */}
+        {/* Colonne 3 — Contact */}
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-widest text-gold mb-5">Contact</h4>
           <ul className="space-y-4">
@@ -139,7 +110,7 @@ export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
             <li>
               <a
                 href="mailto:contact@yoanndelaloy.com"
-                className="flex items-center gap-3 text-gray-400 hover:text-gold transition-colors text-sm"
+                className="flex items-center gap-3 text-gray-400 hover-metallic-gold transition-all text-sm"
               >
                 <Mail size={16} className="text-gold shrink-0" />
                 contact@yoanndelaloy.com
@@ -148,7 +119,7 @@ export const Footer: React.FC<FooterProps> = ({ onShowLegal }) => {
             <li>
               <a
                 href="tel:+33647344364"
-                className="flex items-center gap-3 text-gray-400 hover:text-gold transition-colors text-sm font-medium"
+                className="flex items-center gap-3 text-gray-400 hover-metallic-gold transition-all text-sm font-medium"
               >
                 <Phone size={16} className="text-gold shrink-0" />
                 06 47 34 43 64
