@@ -40,12 +40,21 @@ export const Hero: React.FC = () => {
             timer = setTimeout(() => {
               primaryCard?.classList.add('animated');
               secondaryCard?.classList.add('animated');
+              // Une fois l'animation terminée, activer le hover interactif via la classe settled
+              primaryCard?.addEventListener('animationend', () => {
+                primaryCard.classList.add('hero-card-settled');
+              }, { once: true });
+              secondaryCard?.addEventListener('animationend', () => {
+                secondaryCard.classList.add('hero-card-settled');
+              }, { once: true });
             }, 1500);
           } else {
             // L'utilisateur est reparti : annuler le timer éventuel et réinitialiser pour replay
             if (timer) { clearTimeout(timer); timer = null; }
             primaryCard?.classList.remove('animated');
+            primaryCard?.classList.remove('hero-card-settled');
             secondaryCard?.classList.remove('animated');
+            secondaryCard?.classList.remove('hero-card-settled');
           }
         });
       },
@@ -124,7 +133,7 @@ export const Hero: React.FC = () => {
 
               {/* Carte principale (blanche) */}
               <div
-                className="hero-card-primary absolute top-0 right-0 w-64 h-80 rounded-2xl z-20 transform rotate-3 hover:rotate-0 transition-[box-shadow,border] duration-700 shadow-2xl p-6 flex flex-col gap-2"
+                className="hero-card-primary absolute top-0 right-0 w-64 h-80 rounded-2xl z-20 transition-[box-shadow,border] duration-700 shadow-2xl p-6 flex flex-col gap-2"
                 style={{
                   background: 'rgba(255,250,240,0.92)',
                   backdropFilter: 'blur(16px)',
@@ -169,7 +178,7 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Carte secondaire (sombre) */}
-              <div className="hero-card-secondary absolute bottom-4 left-[-20px] w-56 h-64 rounded-2xl z-10 transform -rotate-6 shadow-xl bg-charcoal text-white p-6 border border-white/10">
+              <div className="hero-card-secondary absolute bottom-4 left-[-20px] w-56 h-64 rounded-2xl z-10 shadow-xl bg-charcoal text-white p-6 border border-white/10">
                 <div className="h-full flex flex-col justify-between opacity-90">
                   <img
                     src="/Media/Logos/Logos divers/hosting-3d-icon-png-download-8034777.webp"
