@@ -35,56 +35,87 @@ export const Hero: React.FC = () => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     let glassTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // ── Effet verre cassé ───────────────────────────────────────────────────
+    // ── Effet verre cassé métallique or ────────────────────────────────────
     const spawnGlassShards = (cx: number, cy: number) => {
       if (!glassContainer) return;
       glassContainer.innerHTML = '';
 
-      // Flash d'impact
+      // Flash d'impact doré
       const flash = document.createElement('div');
-      flash.style.cssText = `position:absolute;left:${cx - 50}px;top:${cy - 50}px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(210,230,255,0.55) 40%,transparent 70%);pointer-events:none;`;
+      flash.style.cssText = `position:absolute;left:${cx - 60}px;top:${cy - 60}px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,248,180,0.95) 0%,rgba(212,175,55,0.55) 40%,transparent 70%);pointer-events:none;box-shadow:0 0 24px rgba(212,175,55,0.5);`;
       glassContainer.appendChild(flash);
       flash.animate(
-        [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(2.5)', opacity: 0 }],
-        { duration: 350, easing: 'ease-out', fill: 'forwards' }
+        [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(3)', opacity: 0 }],
+        { duration: 400, easing: 'ease-out', fill: 'forwards' }
       );
-      setTimeout(() => { if (flash.parentElement) flash.remove(); }, 400);
+      setTimeout(() => { if (flash.parentElement) flash.remove(); }, 450);
 
-      // Éclats de verre — polygones irréguliers
-      const shards = [
-        { w: 18, h: 22, clip: 'polygon(0 0,100% 20%,80% 100%,10% 90%)',  dx: -55, dy: 150, dr: -130, d: 0   },
-        { w: 12, h: 16, clip: 'polygon(20% 0,100% 0,100% 70%,0 100%)',   dx: -28, dy: 180, dr:  120, d: 50  },
-        { w: 22, h: 14, clip: 'polygon(0 30%,100% 0,90% 100%,5% 80%)',   dx:  45, dy: 160, dr: -100, d: 80  },
-        { w: 10, h: 20, clip: 'polygon(50% 0,100% 100%,0 80%)',          dx: -72, dy: 130, dr:  160, d: 30  },
-        { w: 16, h: 12, clip: 'polygon(0 0,80% 10%,100% 100%,20% 100%)', dx:  60, dy: 145, dr:   80, d: 100 },
-        { w: 8,  h: 18, clip: 'polygon(30% 0,100% 20%,70% 100%,0 90%)',  dx: -40, dy: 185, dr: -170, d: 20  },
-        { w: 14, h: 10, clip: 'polygon(0 0,100% 0,80% 100%,10% 100%)',   dx:  35, dy: 115, dr:  110, d: 60  },
-        { w: 20, h: 16, clip: 'polygon(10% 0,100% 10%,90% 100%,0 85%)',  dx: -78, dy: 170, dr:  -80, d: 40  },
-        { w: 9,  h: 14, clip: 'polygon(40% 0,100% 30%,60% 100%,0 70%)',  dx:  22, dy: 200, dr:  200, d: 90  },
-        { w: 15, h: 18, clip: 'polygon(0 10%,90% 0,100% 90%,15% 100%)',  dx: -50, dy: 155, dr: -150, d: 15  },
+      // 4 variantes de dégradé or métallique
+      const golds = [
+        'linear-gradient(135deg,#9C7C38 0%,#D4AF37 28%,#F4E095 50%,#D4AF37 72%,#9C7C38 100%)',
+        'linear-gradient(160deg,#F4E095 0%,#C5A059 38%,#B68D40 100%)',
+        'linear-gradient(45deg,#B68D40 0%,#F4E095 45%,#D4AF37 75%,#9C7C38 100%)',
+        'linear-gradient(90deg,#D4AF37 0%,#F4E095 50%,#9C7C38 100%)',
       ];
 
-      shards.forEach(({ w, h, clip, dx, dy, dr, d }) => {
+      // 28 éclats — grands fragments + petits éclats + micro-étincelles
+      // dy élevés (280–500px) pour tomber jusqu'au niveau du n° de téléphone
+      const shards = [
+        // Grands fragments
+        { w: 28, h: 20, clip: 'polygon(0 0,100% 15%,85% 100%,5% 90%)',   dx: -45, dy: 280, dr: -120, d: 0   },
+        { w: 24, h: 30, clip: 'polygon(10% 0,100% 0,90% 85%,0 100%)',    dx:  55, dy: 320, dr:   95, d: 30  },
+        { w: 30, h: 18, clip: 'polygon(0 20%,100% 0,95% 100%,5% 80%)',   dx: -70, dy: 260, dr: -145, d: 60  },
+        { w: 26, h: 22, clip: 'polygon(5% 0,100% 10%,90% 100%,0 85%)',   dx:  40, dy: 350, dr:  110, d: 20  },
+        // Fragments moyens
+        { w: 18, h: 22, clip: 'polygon(0 0,100% 20%,80% 100%,10% 90%)',  dx: -55, dy: 360, dr: -130, d: 10  },
+        { w: 12, h: 16, clip: 'polygon(20% 0,100% 0,100% 70%,0 100%)',   dx: -28, dy: 400, dr:  120, d: 50  },
+        { w: 22, h: 14, clip: 'polygon(0 30%,100% 0,90% 100%,5% 80%)',   dx:  45, dy: 340, dr: -100, d: 80  },
+        { w: 10, h: 20, clip: 'polygon(50% 0,100% 100%,0 80%)',          dx: -72, dy: 310, dr:  160, d: 25  },
+        { w: 16, h: 12, clip: 'polygon(0 0,80% 10%,100% 100%,20% 100%)', dx:  60, dy: 380, dr:   80, d: 100 },
+        { w: 8,  h: 18, clip: 'polygon(30% 0,100% 20%,70% 100%,0 90%)',  dx: -40, dy: 420, dr: -170, d: 20  },
+        { w: 14, h: 10, clip: 'polygon(0 0,100% 0,80% 100%,10% 100%)',   dx:  35, dy: 290, dr:  110, d: 65  },
+        { w: 20, h: 16, clip: 'polygon(10% 0,100% 10%,90% 100%,0 85%)',  dx: -78, dy: 370, dr:  -80, d: 40  },
+        { w: 9,  h: 14, clip: 'polygon(40% 0,100% 30%,60% 100%,0 70%)',  dx:  22, dy: 430, dr:  200, d: 90  },
+        { w: 15, h: 18, clip: 'polygon(0 10%,90% 0,100% 90%,15% 100%)',  dx: -50, dy: 355, dr: -150, d: 15  },
+        { w: 19, h: 13, clip: 'polygon(5% 0,95% 10%,100% 90%,0 100%)',   dx:  65, dy: 445, dr:  130, d: 70  },
+        { w: 13, h: 21, clip: 'polygon(0 5%,100% 0,95% 95%,10% 100%)',   dx: -35, dy: 390, dr:  -90, d: 35  },
+        { w: 17, h: 11, clip: 'polygon(0 0,100% 5%,90% 100%,15% 95%)',   dx:  80, dy: 305, dr:  160, d: 85  },
+        // Petits éclats
+        { w: 8,  h: 10, clip: 'polygon(50% 0,100% 50%,50% 100%,0 50%)', dx: -20, dy: 455, dr:  240, d: 5   },
+        { w: 6,  h: 9,  clip: 'polygon(0 0,100% 20%,80% 100%)',         dx:  30, dy: 415, dr: -200, d: 45  },
+        { w: 10, h: 7,  clip: 'polygon(20% 0,100% 0,80% 100%,0 80%)',   dx: -60, dy: 465, dr:  180, d: 75  },
+        { w: 7,  h: 11, clip: 'polygon(50% 0,100% 100%,0 100%)',        dx:  50, dy: 485, dr: -160, d: 110 },
+        { w: 5,  h: 8,  clip: 'polygon(0 0,100% 0,70% 100%)',           dx: -15, dy: 500, dr:  300, d: 55  },
+        { w: 9,  h: 6,  clip: 'polygon(0 20%,100% 0,100% 80%,0 100%)', dx:  42, dy: 475, dr: -250, d: 95  },
+        // Micro-étincelles
+        { w: 4,  h: 6,  clip: 'polygon(50% 0,100% 100%,0 100%)',        dx: -80, dy: 355, dr:  400, d: 10  },
+        { w: 5,  h: 4,  clip: 'polygon(0 0,100% 0,100% 100%)',          dx:  72, dy: 335, dr: -350, d: 65  },
+        { w: 3,  h: 5,  clip: 'polygon(50% 0,100% 60%,20% 100%,0 40%)', dx: -25, dy: 495, dr:  500, d: 30  },
+        { w: 6,  h: 4,  clip: 'polygon(0 0,100% 20%,80% 100%,0 80%)',  dx:  18, dy: 465, dr: -400, d: 120 },
+        { w: 4,  h: 7,  clip: 'polygon(30% 0,100% 0,70% 100%,0 50%)',  dx: -88, dy: 415, dr:  350, d: 80  },
+      ];
+
+      shards.forEach(({ w, h, clip, dx, dy, dr, d }, i) => {
         const s = document.createElement('div');
         s.style.cssText = [
           'position:absolute',
           `width:${w}px`, `height:${h}px`,
           `left:${cx - w / 2}px`, `top:${cy - h / 2}px`,
           `clip-path:${clip}`,
-          'background:linear-gradient(135deg,rgba(255,255,255,0.92) 0%,rgba(210,235,255,0.75) 40%,rgba(160,200,255,0.45) 100%)',
-          'box-shadow:inset 0 1px 3px rgba(255,255,255,0.9),inset -1px -1px 2px rgba(100,150,200,0.3),0 0 6px rgba(180,210,255,0.4)',
+          `background:${golds[i % golds.length]}`,
+          'box-shadow:inset 0 1px 4px rgba(244,224,149,0.9),inset -1px -1px 2px rgba(156,124,56,0.4),0 0 8px rgba(212,175,55,0.5)',
           'pointer-events:none', 'will-change:transform,opacity',
         ].join(';');
         glassContainer.appendChild(s);
         s.animate(
           [
-            { transform: 'translate(0,0) rotate(0deg) scale(1)',                                            opacity: 0.9         },
-            { transform: `translate(${dx * 0.3}px,${-10}px) rotate(${dr * 0.25}deg) scale(1.05)`,          opacity: 0.9, offset: 0.2 },
-            { transform: `translate(${dx}px,${dy}px) rotate(${dr}deg) scale(0.6)`,                          opacity: 0           },
+            { transform: 'translate(0,0) rotate(0deg) scale(1)',                                        opacity: 1          },
+            { transform: `translate(${dx * 0.2}px,${-8}px) rotate(${dr * 0.15}deg) scale(1.05)`,        opacity: 1, offset: 0.1 },
+            { transform: `translate(${dx}px,${dy}px) rotate(${dr}deg) scale(0.7)`,                       opacity: 0          },
           ],
-          { duration: 1300, delay: d, easing: 'cubic-bezier(0.55,0,1,0.45)', fill: 'forwards' }
+          { duration: 1500, delay: d, easing: 'cubic-bezier(0.25,0.46,0.45,0.94)', fill: 'forwards' }
         );
-        setTimeout(() => { if (s.parentElement) s.remove(); }, 1400 + d);
+        setTimeout(() => { if (s.parentElement) s.remove(); }, 1650 + d);
       });
     };
     // ───────────────────────────────────────────────────────────────────────
