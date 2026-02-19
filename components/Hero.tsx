@@ -36,12 +36,16 @@ export const Hero: React.FC = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            observer.disconnect();
-            // Attendre 2 s que la page soit bien chargée avant de lancer
+            // Délai 1.5 s, puis animation (fill-mode:both place déjà les cartes hors-écran pendant ce délai)
             timer = setTimeout(() => {
               primaryCard?.classList.add('animated');
               secondaryCard?.classList.add('animated');
-            }, 2000);
+            }, 1500);
+          } else {
+            // L'utilisateur est reparti : annuler le timer éventuel et réinitialiser pour replay
+            if (timer) { clearTimeout(timer); timer = null; }
+            primaryCard?.classList.remove('animated');
+            secondaryCard?.classList.remove('animated');
           }
         });
       },
@@ -68,7 +72,7 @@ export const Hero: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-8 md:gap-20 lg:gap-32 items-center">
 
         {/* Left: Text Content */}
         <div className="space-y-6 md:space-y-8 text-center md:text-left">
@@ -115,8 +119,8 @@ export const Hero: React.FC = () => {
 
         {/* Right: Abstract Visual — masqué sur mobile */}
         <div className="relative h-[480px] w-full hidden md:block animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-80 h-96">
+          <div className="absolute inset-0 flex items-center justify-end">
+            <div className="relative w-80 h-96 -mr-8 lg:-mr-16">
 
               {/* Carte principale (blanche) */}
               <div

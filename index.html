@@ -420,20 +420,23 @@
       }
       @keyframes slide-in-card-primary {
         0%   { transform: translateX(170%) rotate(36deg);  opacity: 0; }
+        7%   { transform: translateX(130%) rotate(30deg);  opacity: 1; }
         58%  { transform: translateX(8px)   rotate(9deg);  opacity: 1; }
-        76%  { transform: translateX(34px)  rotate(14deg); }
+        76%  { transform: translateX(34px)  rotate(14deg); opacity: 1; }
         100% { transform: translateX(26px)  rotate(12deg); opacity: 1; }
       }
       @keyframes slide-in-card-secondary {
         0%   { transform: translateX(190%) rotate(-38deg); opacity: 0; }
+        7%   { transform: translateX(148%) rotate(-32deg); opacity: 1; }
         60%  { transform: translateX(6px)   rotate(-22deg); opacity: 1; }
         100% { transform: translateX(30px)  rotate(-20deg); opacity: 1; }
       }
+      /* fill-mode: both — pendant le délai, la carte est déjà à 0% (hors-écran) */
       .hero-card-primary.animated {
-        animation: slide-in-card-primary 3.4s cubic-bezier(0.34,1.1,0.64,1) forwards;
+        animation: slide-in-card-primary 3.4s cubic-bezier(0.34,1.1,0.64,1) both;
       }
       .hero-card-secondary.animated {
-        animation: slide-in-card-secondary 4s cubic-bezier(0.34,1.1,0.64,1) 0.45s forwards;
+        animation: slide-in-card-secondary 4s cubic-bezier(0.34,1.1,0.64,1) 0.45s both;
       }
 
       /* ===================== HOVER FOND METALLIC (réseaux sociaux) ===================== */
