@@ -447,11 +447,12 @@
       }
       /* fill-mode: both — pendant le délai JS, les cartes sont déjà hors-écran (0% keyframe)
          animation-timing-function: linear comme fallback, surchargé par keyframe */
+      /* Secondaire part en premier (0s), primaire avec 0.5s de décalage */
       .hero-card-primary.animated {
-        animation: slide-in-card-primary 4s linear both;
+        animation: slide-in-card-primary 4s linear 0.5s both;
       }
       .hero-card-secondary.animated {
-        animation: slide-in-card-secondary 4.5s linear 0.5s both;
+        animation: slide-in-card-secondary 4.5s linear both;
       }
       /* État settled (après animationend) — hover interactif restauré */
       .hero-card-primary.hero-card-settled {

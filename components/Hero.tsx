@@ -27,10 +27,67 @@ export const Hero: React.FC = () => {
     const el = heroRef.current;
     if (!el) return;
 
-    const primaryCard = el.querySelector('.hero-card-primary') as HTMLElement | null;
-    const secondaryCard = el.querySelector('.hero-card-secondary') as HTMLElement | null;
+    const primaryCard   = el.querySelector('.hero-card-primary')    as HTMLElement | null;
+    const secondaryCard = el.querySelector('.hero-card-secondary')  as HTMLElement | null;
+    const glassContainer = el.querySelector('.hero-glass-container') as HTMLElement | null;
+    const numeriqueEl   = el.querySelector('.hero-numerique')       as HTMLElement | null;
 
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let glassTimer: ReturnType<typeof setTimeout> | null = null;
+
+    // ── Effet verre cassé ───────────────────────────────────────────────────
+    const spawnGlassShards = (cx: number, cy: number) => {
+      if (!glassContainer) return;
+      glassContainer.innerHTML = '';
+
+      // Flash d'impact
+      const flash = document.createElement('div');
+      flash.style.cssText = `position:absolute;left:${cx - 50}px;top:${cy - 50}px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(210,230,255,0.55) 40%,transparent 70%);pointer-events:none;`;
+      glassContainer.appendChild(flash);
+      flash.animate(
+        [{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(2.5)', opacity: 0 }],
+        { duration: 350, easing: 'ease-out', fill: 'forwards' }
+      );
+      setTimeout(() => { if (flash.parentElement) flash.remove(); }, 400);
+
+      // Éclats de verre — polygones irréguliers
+      const shards = [
+        { w: 18, h: 22, clip: 'polygon(0 0,100% 20%,80% 100%,10% 90%)',  dx: -55, dy: 150, dr: -130, d: 0   },
+        { w: 12, h: 16, clip: 'polygon(20% 0,100% 0,100% 70%,0 100%)',   dx: -28, dy: 180, dr:  120, d: 50  },
+        { w: 22, h: 14, clip: 'polygon(0 30%,100% 0,90% 100%,5% 80%)',   dx:  45, dy: 160, dr: -100, d: 80  },
+        { w: 10, h: 20, clip: 'polygon(50% 0,100% 100%,0 80%)',          dx: -72, dy: 130, dr:  160, d: 30  },
+        { w: 16, h: 12, clip: 'polygon(0 0,80% 10%,100% 100%,20% 100%)', dx:  60, dy: 145, dr:   80, d: 100 },
+        { w: 8,  h: 18, clip: 'polygon(30% 0,100% 20%,70% 100%,0 90%)',  dx: -40, dy: 185, dr: -170, d: 20  },
+        { w: 14, h: 10, clip: 'polygon(0 0,100% 0,80% 100%,10% 100%)',   dx:  35, dy: 115, dr:  110, d: 60  },
+        { w: 20, h: 16, clip: 'polygon(10% 0,100% 10%,90% 100%,0 85%)',  dx: -78, dy: 170, dr:  -80, d: 40  },
+        { w: 9,  h: 14, clip: 'polygon(40% 0,100% 30%,60% 100%,0 70%)',  dx:  22, dy: 200, dr:  200, d: 90  },
+        { w: 15, h: 18, clip: 'polygon(0 10%,90% 0,100% 90%,15% 100%)',  dx: -50, dy: 155, dr: -150, d: 15  },
+      ];
+
+      shards.forEach(({ w, h, clip, dx, dy, dr, d }) => {
+        const s = document.createElement('div');
+        s.style.cssText = [
+          'position:absolute',
+          `width:${w}px`, `height:${h}px`,
+          `left:${cx - w / 2}px`, `top:${cy - h / 2}px`,
+          `clip-path:${clip}`,
+          'background:linear-gradient(135deg,rgba(255,255,255,0.92) 0%,rgba(210,235,255,0.75) 40%,rgba(160,200,255,0.45) 100%)',
+          'box-shadow:inset 0 1px 3px rgba(255,255,255,0.9),inset -1px -1px 2px rgba(100,150,200,0.3),0 0 6px rgba(180,210,255,0.4)',
+          'pointer-events:none', 'will-change:transform,opacity',
+        ].join(';');
+        glassContainer.appendChild(s);
+        s.animate(
+          [
+            { transform: 'translate(0,0) rotate(0deg) scale(1)',                                            opacity: 0.9         },
+            { transform: `translate(${dx * 0.3}px,${-10}px) rotate(${dr * 0.25}deg) scale(1.05)`,          opacity: 0.9, offset: 0.2 },
+            { transform: `translate(${dx}px,${dy}px) rotate(${dr}deg) scale(0.6)`,                          opacity: 0           },
+          ],
+          { duration: 1300, delay: d, easing: 'cubic-bezier(0.55,0,1,0.45)', fill: 'forwards' }
+        );
+        setTimeout(() => { if (s.parentElement) s.remove(); }, 1400 + d);
+      });
+    };
+    // ───────────────────────────────────────────────────────────────────────
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -40,6 +97,17 @@ export const Hero: React.FC = () => {
             timer = setTimeout(() => {
               primaryCard?.classList.add('animated');
               secondaryCard?.classList.add('animated');
+
+              // Effet verre cassé : la carte secondaire (qui part en premier) tape à 54% de 4.5s = 2430ms
+              glassTimer = setTimeout(() => {
+                if (!numeriqueEl) return;
+                const heroRect = el.getBoundingClientRect();
+                const numRect  = numeriqueEl.getBoundingClientRect();
+                const cx = numRect.right - heroRect.left;
+                const cy = numRect.top - heroRect.top + numRect.height * 0.65;
+                spawnGlassShards(cx, cy);
+              }, 2430);
+
               // Une fois l'animation terminée, activer le hover interactif via la classe settled
               primaryCard?.addEventListener('animationend', () => {
                 primaryCard.classList.add('hero-card-settled');
@@ -49,8 +117,10 @@ export const Hero: React.FC = () => {
               }, { once: true });
             }, 1500);
           } else {
-            // L'utilisateur est reparti : annuler le timer éventuel et réinitialiser pour replay
+            // L'utilisateur est reparti : annuler les timers et réinitialiser pour replay
             if (timer) { clearTimeout(timer); timer = null; }
+            if (glassTimer) { clearTimeout(glassTimer); glassTimer = null; }
+            if (glassContainer) glassContainer.innerHTML = '';
             primaryCard?.classList.remove('animated');
             primaryCard?.classList.remove('hero-card-settled');
             secondaryCard?.classList.remove('animated');
@@ -65,6 +135,7 @@ export const Hero: React.FC = () => {
     return () => {
       observer.disconnect();
       if (timer) clearTimeout(timer);
+      if (glassTimer) clearTimeout(glassTimer);
     };
   }, []);
 
@@ -81,6 +152,9 @@ export const Hero: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }}></div>
       </div>
 
+      {/* Container pour l'effet verre cassé */}
+      <div className="hero-glass-container absolute inset-0 pointer-events-none z-30" />
+
       <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-8 md:gap-20 lg:gap-32 items-center">
 
         {/* Left: Text Content */}
@@ -95,7 +169,7 @@ export const Hero: React.FC = () => {
           <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold leading-tight animate-slide-up">
             <span className="text-metallic-navy">L'Artisanat</span>
             <br />
-            <span className="text-metallic-gold">
+            <span className="hero-numerique text-metallic-gold">
               Numérique
             </span>
           </h1>
