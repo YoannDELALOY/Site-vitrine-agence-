@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Star, Quote, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, ExternalLink } from 'lucide-react';
+import { ArrowRight, Quote, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, ExternalLink } from 'lucide-react';
+import starImg from '../Media/etoiletrnsparante.png';
 import { projectsData, ProjectData, ExpertiseCategory } from '../data/projects';
 import { projectsTestimonials } from '../data/testimonials';
 
@@ -7,6 +8,7 @@ interface ProjectsPageProps {
   onOpenProject?: (project: ProjectData) => void;
   onNavigateBlogArticle?: (projectId: string) => void;
   onGoToContact?: () => void;
+  onNavigateExpertise?: (expertiseId: ExpertiseCategory) => void;
 }
 
 // Configuration des 6 sections expertise
@@ -63,12 +65,12 @@ const expertiseSections: ExpertiseSection[] = [
   },
 ];
 
-interface ProjectCardPageProps {
+export interface ProjectCardPageProps {
   project: ProjectData;
   onNavigate: (projectId: string) => void;
 }
 
-const ProjectCardPage: React.FC<ProjectCardPageProps> = ({ project, onNavigate }) => {
+export const ProjectCardPage: React.FC<ProjectCardPageProps> = ({ project, onNavigate }) => {
   return (
     <div
       className="group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2"
@@ -129,7 +131,40 @@ const ProjectCardPage: React.FC<ProjectCardPageProps> = ({ project, onNavigate }
   );
 };
 
-export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onNavigateBlogArticle, onGoToContact }) => {
+// Carte CTA "Voir toutes les réalisations" pour une section
+interface ExpertiseCTACardProps {
+  section: ExpertiseSection;
+  onNavigate?: (expertiseId: ExpertiseCategory) => void;
+}
+
+const ExpertiseCTACard: React.FC<ExpertiseCTACardProps> = ({ section, onNavigate }) => {
+  return (
+    <div
+      className="group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2 flex flex-col items-center justify-center text-center p-8 min-h-[320px]"
+      style={{
+        background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%)',
+        border: '1px dashed rgba(212,175,55,0.4)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+      }}
+      onClick={() => onNavigate?.(section.id)}
+    >
+      <div className={`p-4 rounded-2xl bg-gradient-to-br ${section.accentColor} border border-white/20 text-gold mb-5 transition-transform duration-300 group-hover:scale-110`}>
+        {section.icon}
+      </div>
+      <h3 className="font-serif text-lg font-bold text-metallic-gold mb-3 leading-tight">
+        Voir toutes nos réalisations
+      </h3>
+      <p className="text-steel text-sm mb-6 leading-relaxed max-w-[200px]">
+        {section.title}
+      </p>
+      <div className="inline-flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-charcoal rounded-full text-sm font-semibold shadow-lg transition-all group-hover:shadow-xl">
+        Découvrir <ArrowRight size={15} />
+      </div>
+    </div>
+  );
+};
+
+export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onNavigateBlogArticle, onGoToContact, onNavigateExpertise }) => {
 
   const handleCardClick = (projectId: string) => {
     if (onNavigateBlogArticle) {
@@ -160,7 +195,10 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onNav
 
         {/* Sections par expertise */}
         {expertiseSections.map((section) => {
-          const sectionProjects = projectsData.filter((p) => p.expertise === section.id);
+          const sectionProjects = projectsData
+            .filter((p) => p.expertise === section.id)
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .slice(0, 5);
           if (sectionProjects.length === 0) return null;
 
           return (
@@ -179,15 +217,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onNav
                 <div className="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent ml-4"></div>
               </div>
 
-              {/* Grille de projets */}
+              {/* Grille 3 colonnes, 2 rangées max (5 cartes + 1 carte CTA) */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {sectionProjects.map((project) => (
-                  <ProjectCardPage
-                    key={project.id}
-                    project={project}
-                    onNavigate={handleCardClick}
-                  />
+                  <ProjectCardPage key={project.id} project={project} onNavigate={handleCardClick} />
                 ))}
+                <ExpertiseCTACard section={section} onNavigate={onNavigateExpertise} />
               </div>
             </div>
           );
@@ -223,11 +258,9 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onOpenProject, onNav
                   <ExternalLink size={14} className="text-gold" />
                 </div>
 
-                <div className="flex gap-1 mb-6">
+                <div className="flex gap-0.5 mb-6">
                   {[...Array(5)].map((_, idx) => (
-                    <span key={idx} className="star-metallic-gold inline-flex">
-                      <Star size={16} fill="#D4AF37" color="#D4AF37" />
-                    </span>
+                    <img key={idx} src={starImg} alt="★" className="w-5 h-5 object-contain drop-shadow-sm" />
                   ))}
                 </div>
 

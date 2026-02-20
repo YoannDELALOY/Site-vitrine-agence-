@@ -17,11 +17,13 @@ import { AgencyPage } from './components/AgencyPage';
 import { ServiceDetailPage } from './components/ServiceDetailPage';
 import { BlogPage } from './components/BlogPage';
 import { BlogArticlePage } from './components/BlogArticlePage';
+import { ExpertiseProjectsPage } from './components/ExpertiseProjectsPage';
 import { CookieBanner } from './components/CookieBanner';
 import { projectsData } from './components/Projects';
+import { ExpertiseCategory } from './data/projects';
 import { SectionId } from './types';
 
-type Page = 'home' | 'mentions' | 'privacy' | 'expertise' | 'realisations' | 'agence' | 'service-detail' | 'blog' | 'blog-article';
+type Page = 'home' | 'mentions' | 'privacy' | 'expertise' | 'realisations' | 'agence' | 'service-detail' | 'blog' | 'blog-article' | 'expertise-projects';
 
 function App() {
   const [page, setPage] = useState<Page>('home');
@@ -29,6 +31,7 @@ function App() {
   const [activeServicePage, setActiveServicePage] = useState<ServiceData | null>(null);
   const [activeProject, setActiveProject] = useState<ProjectData | null>(null);
   const [activeBlogProject, setActiveBlogProject] = useState<ProjectData | null>(null);
+  const [activeExpertiseCategory, setActiveExpertiseCategory] = useState<ExpertiseCategory | null>(null);
 
   const showLegal = useCallback((p: 'mentions' | 'privacy') => {
     setPage(p);
@@ -87,6 +90,12 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const navigateToExpertiseProjects = useCallback((expertiseId: ExpertiseCategory) => {
+    setActiveExpertiseCategory(expertiseId);
+    setPage('expertise-projects');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Pages légales : sans Navbar ni Footer
   if (page === 'mentions') {
     return <LegalMentions onBack={goHome} />;
@@ -124,6 +133,16 @@ function App() {
         {page === 'realisations' && (
           <ProjectsPage
             onOpenProject={openProject}
+            onNavigateBlogArticle={navigateToBlogArticle}
+            onGoToContact={goToContact}
+            onNavigateExpertise={navigateToExpertiseProjects}
+          />
+        )}
+
+        {page === 'expertise-projects' && activeExpertiseCategory && (
+          <ExpertiseProjectsPage
+            expertiseId={activeExpertiseCategory}
+            onBack={() => { setPage('realisations'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             onNavigateBlogArticle={navigateToBlogArticle}
             onGoToContact={goToContact}
           />

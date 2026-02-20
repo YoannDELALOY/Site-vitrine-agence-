@@ -7,6 +7,7 @@ export interface ProjectData {
   title: string;
   category: string;
   expertise: ExpertiseCategory;
+  expertises?: ExpertiseCategory[];
   image: string;
   description: string;
   tags: string[];
