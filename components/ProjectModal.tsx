@@ -35,7 +35,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="cta-leather rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-white/40 animate-slide-up flex flex-col"
+        className="cta-leather rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-white/40 animate-slide-up flex flex-col relative"
         style={{
           backgroundColor: '#FAF6EE',
           backgroundImage: [
@@ -47,6 +47,23 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
           backgroundBlendMode: 'multiply, normal, normal',
         }}
       >
+        {/* Bord gauche — lumière de page */}
+        <div className="absolute top-0 left-0 bottom-0 w-14 pointer-events-none z-10"
+          style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)' }}
+        ></div>
+        {/* Bord droit — ombre légère */}
+        <div className="absolute top-0 right-0 bottom-0 w-10 pointer-events-none z-10"
+          style={{ background: 'linear-gradient(to left, rgba(0,0,0,0.10) 0%, transparent 100%)' }}
+        ></div>
+        {/* Coin bas-gauche — courbure de page */}
+        <div className="absolute bottom-0 left-0 w-48 h-32 pointer-events-none z-10"
+          style={{ background: 'radial-gradient(ellipse at 0% 100%, rgba(0,0,0,0.40) 0%, transparent 65%)' }}
+        ></div>
+        {/* Coin bas-droit — levée de page */}
+        <div className="absolute bottom-0 right-0 w-44 h-36 pointer-events-none z-10"
+          style={{ background: 'radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.06) 35%, transparent 60%)', borderRadius: '0 0 1.5rem 0' }}
+        ></div>
+
         {/* Image Hero */}
         <div className="relative h-56 rounded-t-3xl overflow-hidden shrink-0">
           <img
