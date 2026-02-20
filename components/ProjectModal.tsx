@@ -35,7 +35,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="cta-leather rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/40 animate-slide-up"
+        className="cta-leather rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-white/40 animate-slide-up flex flex-col"
         style={{
           backgroundColor: '#FAF6EE',
           backgroundImage: [
@@ -48,34 +48,39 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
         }}
       >
         {/* Image Hero */}
-        <div className="relative h-56 rounded-t-3xl overflow-hidden">
+        <div className="relative h-56 rounded-t-3xl overflow-hidden shrink-0">
           <img
             src={project.image}
             alt={project.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/60 to-charcoal/20"></div>
+          <div className="absolute inset-0 bg-charcoal/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/40 to-transparent"></div>
 
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white hover:text-charcoal transition-all text-white"
-            aria-label="Fermer"
-          >
-            <X size={20} />
-          </button>
-
-          <div className="absolute bottom-4 left-6 right-6">
-            <span className="text-xs font-medium text-metallic-gold-inline uppercase tracking-widest block mb-1">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+            <span className="text-xs font-medium text-metallic-gold-inline uppercase tracking-widest block mb-2">
               {project.category}
             </span>
             <h2 className="font-serif text-3xl font-bold text-metallic-silver">{project.title}</h2>
           </div>
+
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white hover:text-charcoal transition-all text-white z-10"
+            aria-label="Fermer"
+          >
+            <X size={20} />
+          </button>
         </div>
+
+        {/* Contenu scrollable */}
+        <div className="overflow-y-auto flex-1" style={{ scrollbarGutter: 'stable' }}>
 
         {/* Meta infos */}
         <div className="px-8 py-4 border-b border-gold/10 flex flex-wrap gap-4">
           <div className="flex items-center gap-2 text-sm text-steel">
             <User size={14} className="text-gold" />
+            <span className="text-gold/70 font-medium">Réalisé par</span>
             <span>{project.client}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-steel">
@@ -135,7 +140,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
 
           {/* CTA */}
           <div className="pt-4 border-t border-gold/10">
-            <p className="text-steel text-sm mb-4 text-center">
+            <p className="text-metallic-gold text-sm mb-4 text-center font-semibold">
               Un projet similaire ? Discutons-en.
             </p>
             <div className="flex flex-col gap-3">
@@ -156,7 +161,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
                 }}
                 className="w-full btn-metallic-dark text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"
               >
-                Lire l'article de blog <BookOpen size={16} />
+                En savoir plus <BookOpen size={16} />
               </button>
               <a
                 href={`#${SectionId.CONTACT}`}
@@ -169,6 +174,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
           </div>
         </div>
 
+        </div>{/* fin contenu scrollable */}
       </div>
     </div>
   );
