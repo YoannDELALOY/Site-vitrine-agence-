@@ -1,6 +1,6 @@
 // Données de toutes les réalisations de Maison Siranno
 
-export type ExpertiseCategory = 'web-apps-saas' | 'automatisation-n8n' | 'contenu-marketing-ia' | 'ia-agents-rag' | 'conseil-formation-pilotage';
+export type ExpertiseCategory = 'web-apps-saas' | 'automatisation-n8n' | 'contenu-marketing-ia' | 'ia-agents-rag' | 'conseil-formation' | 'pilotage-continu';
 
 export interface ProjectData {
   id: string;
@@ -152,7 +152,7 @@ export const projectsData: ProjectData[] = [
     id: 'auto-ecole-centrale',
     title: "Auto-École Centrale",
     category: "SEO Local & Calendrier en Ligne",
-    expertise: 'conseil-formation-pilotage',
+    expertise: 'conseil-formation',
     image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=800",
     description: "Refonte SEO locale et déploiement d'un calendrier de réservation en ligne pour leçons de conduite et examens du permis.",
     tags: ["SEO Local", "Calendrier", "Google Ads", "Site Vitrine"],

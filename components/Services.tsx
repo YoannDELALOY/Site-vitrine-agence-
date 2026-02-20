@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Globe, Cpu, Megaphone, Brain, GraduationCap, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionId } from '../types';
 import { servicesData as rawServicesData } from '../data/services';
 
@@ -16,11 +16,12 @@ export interface ServiceData {
 
 // Associer les icônes JSX aux données
 const serviceIcons: Record<string, React.ReactNode> = {
-  'web-apps-saas':              <Globe size={24} />,
-  'automatisation-n8n':        <Cpu size={24} />,
-  'contenu-marketing-ia':      <Megaphone size={24} />,
-  'ia-agents-rag':             <Brain size={24} />,
-  'conseil-formation-pilotage': <GraduationCap size={24} />,
+  'web-apps-saas':         <Globe size={24} />,
+  'automatisation-n8n':   <Cpu size={24} />,
+  'contenu-marketing-ia': <Megaphone size={24} />,
+  'ia-agents-rag':        <Brain size={24} />,
+  'conseil-formation':    <GraduationCap size={24} />,
+  'pilotage-continu':     <BarChart3 size={24} />,
 };
 
 export const servicesData: ServiceData[] = rawServicesData.map((s) => ({
@@ -35,7 +36,7 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => (
   <div
-    className="group relative bg-white/40 backdrop-blur-md border border-white/60 p-8 rounded-2xl hover:bg-white hover:shadow-2xl hover:shadow-gold/10 transition-all duration-500 ease-out hover:-translate-y-2 cursor-pointer"
+    className="group relative bg-white/40 backdrop-blur-md border border-white/60 p-8 rounded-2xl overflow-hidden hover:bg-white hover:shadow-2xl hover:shadow-gold/10 transition-all duration-500 ease-out hover:-translate-y-2 cursor-pointer"
     onClick={() => onClick(service)}
     role="button"
     tabIndex={0}
@@ -105,7 +106,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenService }) => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <span className="text-metallic-gold-inline font-medium tracking-widest uppercase text-sm mb-3 block animate-fade-in">
-            5 Expertises · 1 Partenaire
+            6 Expertises · 1 Partenaire
           </span>
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-metallic-navy mb-6 animate-slide-up">
             L'IA et le web au service de{' '}

@@ -31,7 +31,7 @@ export const ExpertisePage: React.FC<ExpertisePageProps> = ({ onOpenService, onN
             <span className="text-metallic-gold">Expertise</span>
           </h1>
           <p className="text-steel text-xl max-w-2xl mx-auto leading-relaxed">
-            Cinq expertises complémentaires — web, automatisation, IA, marketing, conseil — au service des entreprises ambitieuses du Val de Loire et au-delà.
+            Six expertises complémentaires — web, automatisation, IA, marketing, conseil & formation, pilotage continu — au service des entreprises ambitieuses du Val de Loire et au-delà.
             Chaque prestation est conçue sur mesure, sans compromis.
           </p>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Star, Quote, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, ExternalLink } from 'lucide-react';
+import { ArrowRight, Star, Quote, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, ExternalLink } from 'lucide-react';
 import { projectsData, ProjectData, ExpertiseCategory } from '../data/projects';
 import { projectsTestimonials } from '../data/testimonials';
 
@@ -9,7 +9,7 @@ interface ProjectsPageProps {
   onGoToContact?: () => void;
 }
 
-// Configuration des 5 sections expertise
+// Configuration des 6 sections expertise
 interface ExpertiseSection {
   id: ExpertiseCategory;
   title: string;
@@ -48,11 +48,18 @@ const expertiseSections: ExpertiseSection[] = [
     accentColor: 'from-emerald-500/20 to-emerald-600/10',
   },
   {
-    id: 'conseil-formation-pilotage',
-    title: 'Conseil, Formation & Pilotage',
-    subtitle: 'Stratégie SEO, audit digital, accompagnement transformation',
+    id: 'conseil-formation',
+    title: 'Conseil & Formation',
+    subtitle: 'Stratégie SEO, audit digital, accompagnement transformation, formation équipes',
     icon: <GraduationCap size={20} />,
     accentColor: 'from-amber-500/20 to-amber-600/10',
+  },
+  {
+    id: 'pilotage-continu',
+    title: 'Pilotage Continu',
+    subtitle: 'Suivi mensuel KPIs, optimisation permanente, retainer digital',
+    icon: <BarChart3 size={20} />,
+    accentColor: 'from-teal-500/20 to-teal-600/10',
   },
 ];
 

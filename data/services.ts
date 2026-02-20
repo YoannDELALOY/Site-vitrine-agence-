@@ -1,4 +1,4 @@
-// Données des 5 expertises de Maison Siranno
+// Données des 6 expertises de Maison Siranno
 // Les icônes JSX sont ajoutées dans Services.tsx pour éviter la circularité des imports
 
 export interface ServiceDataRaw {
@@ -78,19 +78,35 @@ export const servicesData: ServiceDataRaw[] = [
     useCases: ["Support client IA niveau 1 & 2", "Assistant commercial intelligent", "FAQ dynamique sur vos produits", "Analyse de documents automatique"]
   },
   {
-    id: 'conseil-formation-pilotage',
+    id: 'conseil-formation',
     icon: null,
-    title: "Conseil, Formation & Pilotage Continu",
-    description: "Pas juste un exécutant. Un partenaire de croissance long terme qui garantit l'adoption réelle, la montée en compétences de vos équipes et les performances durables.",
+    title: "Conseil & Formation",
+    description: "Un partenaire stratégique qui audite votre organisation, forme vos équipes et garantit l'adoption réelle des technologies déployées.",
     delay: "0.4s",
-    fullDescription: "La technologie la plus avancée ne vaut rien si vos équipes ne l'adoptent pas. Nous vous accompagnons de l'audit stratégique jusqu'à la formation de vos collaborateurs, en passant par le pilotage mensuel de vos KPIs digitaux. Une relation de confiance dans la durée, pas un projet livré et oublié.",
+    fullDescription: "La technologie la plus avancée ne vaut rien si vos équipes ne l'adoptent pas. Nous vous accompagnons de l'audit stratégique jusqu'à la formation de vos collaborateurs. Une relation de confiance dans la durée, pas un projet livré et oublié.",
     benefits: [
       "Audit stratégique IA & digital de votre structure",
       "Formation équipes sur les outils déployés",
-      "Pilotage mensuel KPIs et optimisation continue",
+      "Ateliers pratiques et montée en compétences",
       "Veille technologique et recommandations proactives",
-      "Accès prioritaire pour évolutions et nouvelles fonctionnalités"
+      "Documentation et support post-formation"
     ],
-    useCases: ["Audit transformation digitale", "Formation IA pour PME", "CDO as a Service", "Optimisation ROI digital"]
+    useCases: ["Audit transformation digitale", "Formation IA pour PME", "CDO as a Service", "Ateliers équipes dirigeantes"]
+  },
+  {
+    id: 'pilotage-continu',
+    icon: null,
+    title: "Pilotage Continu",
+    description: "Suivi mensuel de vos KPIs digitaux, optimisation permanente et accès prioritaire pour garantir des performances durables et une croissance maîtrisée.",
+    delay: "0.5s",
+    fullDescription: "Un tableau de bord vivant, des ajustements en temps réel et un interlocuteur dédié chaque mois. Nous pilotons vos indicateurs digitaux, identifions les leviers de croissance et itérons en continu pour maximiser votre ROI — sans jamais perdre de vue vos objectifs métier.",
+    benefits: [
+      "Pilotage mensuel KPIs et tableaux de bord sur-mesure",
+      "Optimisation continue des workflows et automatisations",
+      "Reporting ROI détaillé et recommandations d'itération",
+      "Accès prioritaire pour évolutions et nouvelles fonctionnalités",
+      "Réunion de suivi mensuelle avec compte-rendu actionnable"
+    ],
+    useCases: ["Retainer mensuel digital", "Optimisation ROI continu", "Performance marketing", "Supervision opérationnelle IA"]
   }
 ];

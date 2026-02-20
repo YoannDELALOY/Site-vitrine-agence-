@@ -180,18 +180,14 @@ export const Hero: React.FC = () => {
             </span>
           </div>
 
-          <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl font-bold leading-tight animate-slide-up">
-            <span className="text-metallic-navy">L'Intelligence</span>
-            <br />
-            <span className="hero-numerique text-metallic-gold">
-              au Service du ROI
-            </span>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-slide-up">
+            <span className="block text-metallic-navy">L'Art de Sublimer</span>
+            <span className="block hero-numerique text-metallic-gold">votre Savoir-Faire</span>
           </h1>
 
           <p className="text-lg md:text-xl text-steel font-light leading-relaxed max-w-lg mx-auto md:mx-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            Web apps sur-mesure, automatisation n8n, agents IA RAG, marketing automatisé.{' '}
-            <strong className="text-charcoal font-medium">Des résultats mesurables dès 30 jours</strong>{' '}
-            pour les PME et entrepreneurs ambitieux.
+            Parce que votre métier est unique, votre stratégie digitale doit l'être aussi. Nous concevons votre écosystème web sur-mesure pour{' '}
+            <strong className="text-charcoal font-medium">transformer votre vision en résultats concrets</strong>.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
