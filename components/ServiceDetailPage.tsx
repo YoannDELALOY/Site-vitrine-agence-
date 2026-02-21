@@ -314,6 +314,13 @@ const ProcessStepsSection: React.FC<ProcessStepsSectionProps> = ({ steps }) => {
       }
     }
 
+    // Index du maillon correspondant à l'entrée de la 1ère carte (fin du hors-écran)
+    const card0EntryIdx = Math.floor(activLengths[0] / LINK_SPACING);
+    // Progress à partir duquel la queue commence à se rétracter (entrée dans l'avant-dernière carte)
+    const tailStartProg = steps.length >= 2
+      ? activLengths[steps.length - 2] / total
+      : 0.85;
+
     // Masquer tous les maillons + pointe
     linkRefs.current.forEach(el => { if (el) el.style.opacity = '0'; });
     if (arrowRef.current) arrowRef.current.style.opacity = '0';
@@ -325,19 +332,32 @@ const ProcessStepsSection: React.FC<ProcessStepsSectionProps> = ({ steps }) => {
       const drawn    = total * progress;
       const visIdx   = Math.min(Math.floor(drawn / LINK_SPACING), links.length - 1);
 
-      // Révéler les maillons jusqu'à visIdx
-      for (let i = 0; i <= visIdx; i++) {
+      // ── Fermeture de la queue ──
+      // Quand la tête passe de l'avant-dernière à la dernière carte,
+      // la queue remonte progressivement depuis le hors-écran jusqu'à la 1ère carte.
+      let tailIdx = 0;
+      if (progress >= tailStartProg && tailStartProg < 1) {
+        const closeProgress = (progress - tailStartProg) / (1 - tailStartProg);
+        tailIdx = Math.floor(closeProgress * card0EntryIdx);
+      }
+
+      // Révéler les maillons entre tailIdx et visIdx
+      for (let i = 0; i < tailIdx; i++) {
+        const el = linkRefs.current[i];
+        if (el && el.style.opacity !== '0') el.style.opacity = '0';
+      }
+      for (let i = tailIdx; i <= visIdx; i++) {
         const el = linkRefs.current[i];
         if (el && el.style.opacity !== '1') el.style.opacity = '1';
       }
 
-      // Déplacer la pointe (triangle doré à l'avant du dernier maillon visible)
+      // Déplacer la pointe à l'avant du dernier maillon visible
       if (arrowRef.current && links[visIdx]) {
-        const lk   = links[visIdx];
-        const rad  = lk.angle * Math.PI / 180;
-        const ax   = lk.x + Math.cos(rad) * (LINK_RX + 4);
-        const ay   = lk.y + Math.sin(rad) * (LINK_RX + 4);
-        arrowRef.current.setAttribute('transform', `translate(${ax},${ay}) rotate(${lk.angle})`);
+        const lk  = links[visIdx];
+        const rad = lk.angle * Math.PI / 180;
+        arrowRef.current.setAttribute('transform',
+          `translate(${lk.x + Math.cos(rad) * (LINK_RX + 4)},${lk.y + Math.sin(rad) * (LINK_RX + 4)}) rotate(${lk.angle})`
+        );
         arrowRef.current.style.opacity = '1';
       }
 
@@ -437,12 +457,13 @@ const ProcessStepsSection: React.FC<ProcessStepsSectionProps> = ({ steps }) => {
         aria-hidden="true"
       >
         <defs>
-          {/* Gradient radial 3D pour chaque maillon — bord sombre, centre brillant */}
-          <radialGradient id="linkGrad" cx="38%" cy="32%" r="68%">
-            <stop offset="0%"   stopColor="#FFFDE0"/>
-            <stop offset="22%"  stopColor="#F0C840"/>
-            <stop offset="55%"  stopColor="#B07820"/>
-            <stop offset="100%" stopColor="#3D2200"/>
+          {/* Gradient radial 3D — plus brillant, bords moins sombres */}
+          <radialGradient id="linkGrad" cx="38%" cy="30%" r="68%">
+            <stop offset="0%"   stopColor="#FFFEF0"/>
+            <stop offset="18%"  stopColor="#FFE566"/>
+            <stop offset="42%"  stopColor="#D4A830"/>
+            <stop offset="72%"  stopColor="#8B6010"/>
+            <stop offset="100%" stopColor="#5C3C00"/>
           </radialGradient>
 
           {/* Gradient pour la pointe flèche */}
@@ -488,8 +509,8 @@ const ProcessStepsSection: React.FC<ProcessStepsSectionProps> = ({ steps }) => {
             style={{ opacity: 0 }}
             filter="url(#linkShadow)"
           >
-            {/* Bord extérieur sombre (profondeur) */}
-            <ellipse rx={LINK_RX + 1.5} ry={LINK_RY + 1.5} fill="#2A1600"/>
+            {/* Bord extérieur (moins sombre pour plus d'éclat) */}
+            <ellipse rx={LINK_RX + 1.5} ry={LINK_RY + 1.5} fill="#5C3C08"/>
             {/* Corps principal du maillon */}
             <ellipse rx={LINK_RX} ry={LINK_RY} fill="url(#linkGrad)"/>
             {/* Reflet lumineux en haut à gauche */}
