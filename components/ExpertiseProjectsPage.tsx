@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, Globe, Cpu, Megaphone, Brain, GraduationCap, BarChart3, Quote } from 'lucide-react';
 import starImg from '../Media/etoiletrnsparante.png';
 import { projectsData, ProjectData, ExpertiseCategory } from '../data/projects';
 import { allTestimonials, Testimonial } from '../data/testimonials';
@@ -57,102 +57,80 @@ const expertiseMeta: Record<ExpertiseCategory, ExpertiseMeta> = {
   },
 };
 
-// ─── Carte témoignage ───────────────────────────────────────────────────────
-const TestimonialCard: React.FC<{ t: Testimonial }> = ({ t }) => (
-  <div className="glass-card p-8 rounded-2xl flex flex-col relative h-full">
-    <div className="absolute top-6 right-8 text-gold/10">
-      <Quote size={40} fill="currentColor" />
-    </div>
-    <div className="flex gap-0.5 mb-6">
-      {[...Array(5)].map((_, i) => (
-        <img key={i} src={starImg} alt="★" className="w-5 h-5 object-contain drop-shadow-sm" />
-      ))}
-    </div>
-    <p className="text-charcoal/80 italic mb-8 flex-grow leading-relaxed text-base relative z-10">
-      "{t.content}"
-    </p>
-    <div className="flex items-center gap-4 mt-auto border-t border-gray-100 pt-6">
-      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md shrink-0">
-        <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+// ─── Témoignage bridge (prolongement de la section projet) ──────────────────
+const TestimonialBridge: React.FC<{ t: Testimonial; prevIsEven: boolean }> = ({ t, prevIsEven }) => (
+  <div
+    className="border-b border-gold/15"
+    style={
+      prevIsEven
+        ? { backgroundColor: 'rgba(30, 58, 95, 0.07)' }
+        : {
+            backgroundColor: '#0A1120',
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.28' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E")`,
+            backgroundSize: '600px 600px',
+            backgroundBlendMode: 'overlay',
+          }
+    }
+  >
+    <div className="max-w-7xl mx-auto px-6 py-6">
+      {/* Layout : identité à gauche si section paire (texte à gauche), à droite si impaire */}
+      <div
+        className={`flex gap-5 items-center ${prevIsEven ? 'flex-row-reverse pr-5' : 'pl-5'}`}
+        style={prevIsEven
+          ? { borderRight: '2px solid rgba(212,175,55,0.4)' }
+          : { borderLeft: '2px solid rgba(212,175,55,0.4)' }
+        }
+      >
+        {/* Icône quote */}
+        <Quote
+          size={20}
+          fill="currentColor"
+          className="shrink-0"
+          style={{ color: 'rgba(212,175,55,0.5)' }}
+        />
+
+        {/* Citation */}
+        <p className={`font-serif text-base italic leading-snug flex-1 ${prevIsEven ? 'text-charcoal/80' : 'text-gray-300'}`}>
+          "{t.content}"
+        </p>
+
+        {/* Séparateur vertical */}
+        <div className="hidden sm:block w-px h-8 bg-gold/20 shrink-0" />
+
+        {/* Identité */}
+        <div className={`hidden sm:flex items-center gap-3 shrink-0 ${prevIsEven ? 'flex-row-reverse' : ''}`}>
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-gold/30 shrink-0">
+            <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+          </div>
+          <div className={prevIsEven ? 'text-right' : ''}>
+            <div className={`font-serif font-bold text-xs ${prevIsEven ? 'text-charcoal' : 'text-white'}`}>{t.name}</div>
+            <div className="text-xs text-metallic-gold-inline font-medium">{t.role}, {t.company}</div>
+          </div>
+          <div className="flex gap-0.5">
+            {[...Array(5)].map((_, i) => (
+              <img key={i} src={starImg} alt="★" className="w-3 h-3 object-contain" />
+            ))}
+          </div>
+        </div>
       </div>
-      <div>
-        <div className="font-serif font-bold text-charcoal">{t.name}</div>
-        <div className="text-xs text-metallic-gold-inline uppercase tracking-wide font-medium">
-          {t.role}, {t.company}
+
+      {/* Mobile : identité sous la citation */}
+      <div className={`sm:hidden flex items-center gap-2 mt-3 ${prevIsEven ? 'pr-10 flex-row-reverse' : 'pl-10'}`}>
+        <div className="w-7 h-7 rounded-full overflow-hidden border border-gold/30 shrink-0">
+          <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+        </div>
+        <span className={`font-serif font-bold text-xs ${prevIsEven ? 'text-charcoal' : 'text-white'}`}>{t.name}</span>
+        <span className={`text-xs ${prevIsEven ? 'text-charcoal/30' : 'text-white/20'}`}>·</span>
+        <span className="text-xs text-metallic-gold-inline font-medium">{t.role}</span>
+        <div className="flex gap-0.5 ml-auto">
+          {[...Array(5)].map((_, i) => (
+            <img key={i} src={starImg} alt="★" className="w-3 h-3 object-contain" />
+          ))}
         </div>
       </div>
     </div>
   </div>
 );
-
-// ─── Slider témoignages ─────────────────────────────────────────────────────
-const TestimonialsSlider: React.FC<{ testimonials: Testimonial[] }> = ({ testimonials }) => {
-  const [current, setCurrent] = useState(0);
-  const total = testimonials.length;
-
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + total) % total), [total]);
-  const next = useCallback(() => setCurrent((c) => (c + 1) % total), [total]);
-
-  useEffect(() => {
-    if (total <= 1) return;
-    const id = setInterval(next, 6000);
-    return () => clearInterval(id);
-  }, [next, total]);
-
-  if (total === 0) return null;
-
-  // Afficher jusqu'à 3 cartes en vue (centrée sur current)
-  const visible = total === 1
-    ? [testimonials[0]]
-    : total === 2
-    ? testimonials
-    : [
-        testimonials[current % total],
-        testimonials[(current + 1) % total],
-        testimonials[(current + 2) % total],
-      ].slice(0, Math.min(3, total));
-
-  return (
-    <div className="relative">
-      {/* Grille des cartes visibles */}
-      <div className={`grid gap-6 ${visible.length === 1 ? 'md:grid-cols-1 max-w-xl mx-auto' : visible.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
-        {visible.map((t, i) => (
-          <TestimonialCard key={`${t.projectId}-${i}`} t={t} />
-        ))}
-      </div>
-
-      {/* Navigation */}
-      {total > 3 && (
-        <div className="flex items-center justify-center gap-6 mt-8">
-          <button
-            onClick={prev}
-            className="w-10 h-10 rounded-full btn-metallic-dark flex items-center justify-center shadow-lg"
-            aria-label="Précédent"
-          >
-            <ChevronLeft size={18} className="text-white" />
-          </button>
-          <div className="flex gap-2">
-            {Array.from({ length: total }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-gold w-6' : 'bg-gold/30'}`}
-                aria-label={`Témoignage ${i + 1}`}
-              />
-            ))}
-          </div>
-          <button
-            onClick={next}
-            className="w-10 h-10 rounded-full btn-metallic-dark flex items-center justify-center shadow-lg"
-            aria-label="Suivant"
-          >
-            <ChevronRight size={18} className="text-white" />
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
 
 // ─── Section projet (alternée) ───────────────────────────────────────────────
 interface ProjectSectionProps {
@@ -313,34 +291,20 @@ export const ExpertiseProjectsPage: React.FC<ExpertiseProjectsPageProps> = ({
         </div>
       </div>
 
-      {/* Section témoignages */}
-      {testimonials.length > 0 && (
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
-            <span className="text-metallic-gold-inline font-medium tracking-widest uppercase text-sm mb-2 block">
-              Témoignages
-            </span>
-            <h2 className="font-serif text-4xl font-bold text-metallic-navy mb-4">
-              Ils témoignent de{' '}
-              <span className="text-metallic-gold underline decoration-gold/30 underline-offset-4">leurs résultats</span>
-            </h2>
-            <p className="text-steel">Des chiffres réels, des transformations concrètes.</p>
-          </div>
-          <TestimonialsSlider testimonials={testimonials} />
-        </div>
-      )}
-
-      {/* Sections alternées par projet */}
+      {/* Sections alternées par projet + témoignages contextuels */}
       {projects.length > 0 ? (
         <div className="space-y-0">
-          {projects.map((project, index) => (
-            <ProjectSection
-              key={project.id}
-              project={project}
-              index={index}
-              onNavigate={handleCardClick}
-            />
-          ))}
+          {projects.map((project, index) => {
+            const linkedTestimonial = testimonials.find((t) => t.projectId === project.id);
+            return (
+              <React.Fragment key={project.id}>
+                <ProjectSection project={project} index={index} onNavigate={handleCardClick} />
+                {linkedTestimonial && (
+                  <TestimonialBridge t={linkedTestimonial} prevIsEven={index % 2 === 0} />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-24 text-steel max-w-7xl mx-auto px-6">
@@ -349,7 +313,7 @@ export const ExpertiseProjectsPage: React.FC<ExpertiseProjectsPageProps> = ({
       )}
 
       {/* CTA contact */}
-      <div className="max-w-7xl mx-auto px-6 pb-24">
+      <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="cta-leather glass-panel rounded-3xl p-12 border border-gold/20 relative text-center">
           <div className="relative z-10">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-metallic-navy mb-4">
