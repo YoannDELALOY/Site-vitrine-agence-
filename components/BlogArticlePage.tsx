@@ -12,6 +12,49 @@ interface BlogArticlePageProps {
 
 const perlinNoise = `url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.28' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")`;
 
+/* ── Texture grain bleu marine pour sections sombres ── */
+const BlueSection: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className = '', style = {} }) => (
+  <div
+    className={`relative ${className}`}
+    style={{
+      backgroundColor: '#0A1628',
+      ...style,
+    }}
+  >
+    {/* Grain fractal bleu foncé */}
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='nb'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.04  0 0 0 0 0.10  0 0 0 0 0.28  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nb)'/%3E%3C/svg%3E")`,
+        backgroundSize: '800px 800px',
+        mixBlendMode: 'overlay',
+        opacity: 0.9,
+      }}
+    />
+    {/* Vignette radiale pour profondeur */}
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(30,60,120,0.18) 0%, transparent 70%), radial-gradient(ellipse at 50% 100%, rgba(5,10,30,0.35) 0%, transparent 70%)',
+      }}
+    />
+    {children}
+  </div>
+);
+
+/* ── Section claire — fond identique au hero d'accueil ── */
+const LightSection: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+  <div className={`relative overflow-hidden ${className}`} style={{ backgroundColor: '#FEFEFE' }}>
+    {/* Blobs animés identiques au Hero */}
+    <div className="absolute inset-0 w-full h-full pointer-events-none">
+      <div className="absolute top-0 left-[-10%] w-96 h-96 bg-gold/10 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-yellow-50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob" style={{ animationDelay: '4s' }} />
+    </div>
+    {children}
+  </div>
+);
+
 /* ── Icônes cyclées pour les cartes défi ── */
 const CHALLENGE_ICONS = [Zap, Shield, Target, Lock, Lightbulb, TrendingUp, Clock, Users];
 
@@ -60,9 +103,18 @@ const ChallengeCard: React.FC<{ challenge: string; index: number }> = ({ challen
     >
       <div
         ref={cardRef}
-        className="relative rounded-xl border border-white/6 overflow-hidden cursor-default"
+        className="relative rounded-xl overflow-hidden cursor-default"
         style={{
-          backgroundColor: 'rgba(255,255,255,0.03)',
+          backgroundColor: '#0A1628',
+          backgroundImage: [
+            `url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='nc${index}'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.04  0 0 0 0 0.10  0 0 0 0 0.30  0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nc${index})'/%3E%3C/svg%3E")`,
+            `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='nf${index}'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nf${index})' opacity='0.22'/%3E%3C/svg%3E")`,
+            `radial-gradient(ellipse at 20% 25%, rgba(30,60,120,0.25) 0%, transparent 55%)`,
+            `radial-gradient(ellipse at 80% 75%, rgba(5,10,30,0.45) 0%, transparent 50%)`,
+          ].join(', '),
+          backgroundSize: '500px 500px, 200px 200px, 100% 100%, 100% 100%',
+          backgroundBlendMode: 'overlay, screen, normal, normal',
+          border: '1px solid rgba(255,255,255,0.07)',
           transform: hovered
             ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(16px) scale(1.02)`
             : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)',
@@ -120,13 +172,28 @@ const ChallengeCard: React.FC<{ challenge: string; index: number }> = ({ challen
   );
 };
 
-/* ── Hook IntersectionObserver réutilisable ── */
+/* ── Hook one-shot (ne se réinitialise pas) ── */
 const useFadeIn = (threshold = 0.15) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+};
+
+/* ── Hook bidirectionnel — se réinitialise quand hors vue ── */
+const useToggleVisible = (threshold = 0.5) => {
+  const ref = React.useRef<HTMLElement>(null);
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => setVisible(e.isIntersecting),
       { threshold }
     );
     if (ref.current) obs.observe(ref.current);
@@ -143,37 +210,65 @@ const extractNumber = (str: string): number | null => {
   return isNaN(val) ? null : val;
 };
 
-/* ── AnimatedCounter ── */
-const AnimatedCounter: React.FC<{ target: number; duration?: number }> = ({ target, duration = 1200 }) => {
-  const ref = React.useRef<HTMLSpanElement>(null);
-  const [started, setStarted] = React.useState(false);
+/* ── AnimatedCounter — machine à sous, piloté par trigger externe ── */
+const AnimatedCounter: React.FC<{ target: number; trigger: boolean; delay?: number; duration?: number }> = ({
+  target, trigger, delay = 0, duration = 1400,
+}) => {
   const [display, setDisplay] = React.useState('0');
+  const rafRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setStarted(true); obs.disconnect(); } },
-      { threshold: 0.5 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+    // Reset immédiat quand la section quitte l'écran
+    if (!trigger) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      setDisplay('0');
+      return;
+    }
 
-  React.useEffect(() => {
-    if (!started) return;
-    const start = performance.now();
-    const isFloat = !Number.isInteger(target);
-    const tick = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = eased * target;
-      setDisplay(isFloat ? current.toFixed(1) : Math.round(current).toString());
-      if (progress < 1) requestAnimationFrame(tick);
+    // Démarrage avec délai (stagger)
+    const timeout = setTimeout(() => {
+      const startTime = performance.now();
+      const isFloat = !Number.isInteger(target);
+
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Effet machine à sous : rapide au début, freine brutalement à la fin
+        let displayed: number;
+        if (progress < 0.7) {
+          // Phase turbo : valeurs qui défilent vite, dépasse la cible
+          const overshoot = target * 1.15;
+          const p = progress / 0.7;
+          const eased = 1 - Math.pow(1 - p, 2);
+          displayed = eased * overshoot;
+        } else {
+          // Phase freinage : retombe sur la valeur exacte
+          const p = (progress - 0.7) / 0.3;
+          const eased = 1 - Math.pow(1 - p, 3);
+          const from = target * 1.15;
+          displayed = from + (target - from) * eased;
+        }
+
+        setDisplay(isFloat ? displayed.toFixed(1) : Math.round(displayed).toString());
+
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        } else {
+          setDisplay(isFloat ? target.toFixed(1) : target.toString());
+        }
+      };
+
+      rafRef.current = requestAnimationFrame(tick);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-    requestAnimationFrame(tick);
-  }, [started, target, duration]);
+  }, [trigger, target, delay, duration]);
 
-  return <span ref={ref}>{display}</span>;
+  return <span>{display}</span>;
 };
 
 export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBack, onGoToContact }) => {
@@ -203,10 +298,10 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
 
   /* ── FadeIn refs ── */
   const introFade = useFadeIn(0.15);
-  const approcheFade = useFadeIn(0.05);
+  const approcheFade = useToggleVisible(0.35);
   const defisFade = useFadeIn(0.1);
   const testimonialFade = useFadeIn(0.2);
-  const resultsFade = useFadeIn(0.1);
+  const resultsFade = useToggleVisible(0.4);
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -235,15 +330,27 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
           }}
         />
 
-        {/* Bouton retour glassmorphism */}
-        <div className="absolute top-6 left-6 z-20">
+        {/* Bouton retour — fixe comme la navbar */}
+        <div className="fixed top-5 left-5 z-50">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm transition-all border border-white/20 hover:bg-white/20"
-            style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(10px)' }}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105"
+            style={{
+              background: 'rgba(255,250,240,0.18)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(70,110,180,0.7)',
+            }}
           >
-            <ArrowLeft size={16} />
-            Retour aux réalisations
+            <ArrowLeft size={16} style={{ color: '#D4AF37', filter: 'drop-shadow(0 0 4px rgba(212,175,55,0.4))' }} />
+            <span style={{
+              background: 'linear-gradient(90deg, #C9A227, #F5D678, #D4AF37, #B8860B)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 0 4px rgba(212,175,55,0.3))',
+            }}>Retour aux réalisations</span>
           </button>
         </div>
 
@@ -276,8 +383,14 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
           <h1
             className="text-metallic-silver font-serif font-bold leading-tight max-w-4xl mb-6"
             style={{
-              fontSize: 'clamp(2rem, 6vw, 4rem)',
+              fontSize: 'clamp(2.4rem, 7vw, 5rem)',
               animation: 'heroFadeIn 1s ease forwards',
+              filter: [
+                'drop-shadow(0 0 10px rgba(180,200,210,0.35))',
+                'drop-shadow(4px 6px 0px rgba(0,0,0,0.85))',
+                'drop-shadow(6px 10px 2px rgba(0,0,0,0.45))',
+                'drop-shadow(8px 14px 6px rgba(0,0,0,0.2))',
+              ].join(' '),
             }}
           >
             {project.title}
@@ -328,21 +441,38 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
           from { opacity: 0; transform: translateY(10px) scale(0.9); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
+        .btn-site {
+          background: linear-gradient(135deg, #1a2744 0%, #0d1b35 100%);
+          border: 1px solid rgba(255,255,255,0.12);
+          transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+        .btn-site:hover {
+          background: linear-gradient(135deg, #9C7C38 0%, #D4AF37 30%, #F4E095 50%, #D4AF37 70%, #9C7C38 100%);
+          border-color: rgba(212,175,55,0.5);
+          box-shadow: 0 0 16px rgba(212,175,55,0.3);
+          transform: scale(1.06);
+        }
+        .btn-site .btn-site-text {
+          color: #C8C8C8;
+          transition: color 0.3s;
+        }
+        .btn-site:hover .btn-site-text {
+          color: #3a2800;
+        }
+        .btn-site .btn-site-icon {
+          color: #C0C0C0;
+          transition: color 0.3s;
+        }
+        .btn-site:hover .btn-site-icon {
+          color: #3a2800;
+        }
       `}</style>
 
 
       {/* ═══════════════════════════════════════════════════════
           2. INTRO — fond sombre, contexte client
       ═══════════════════════════════════════════════════════ */}
-      <section
-        className="relative py-20 border-t border-gold/10"
-        style={{ backgroundColor: '#0F172A' }}
-      >
-        {/* Grain */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: perlinNoise, backgroundSize: '400px 400px', opacity: 0.18 }}
-        />
+      <BlueSection className="py-20 border-t border-gold/10">
 
         <div
           ref={introFade.ref}
@@ -379,7 +509,7 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-metallic-dark inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold text-white"
+                  className="btn-site inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold"
                 >
                   <img
                     src={`https://www.google.com/s2/favicons?domain=${domain}&sz=16`}
@@ -387,8 +517,8 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
                     className="w-4 h-4 rounded-sm"
                     onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                   />
-                  Voir le site
-                  <ArrowUpRight size={13} />
+                  <span className="btn-site-text">Voir le site</span>
+                  <ArrowUpRight size={13} className="btn-site-icon" />
                 </a>
               );
             })()}
@@ -425,16 +555,13 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
           {/* Filet bas */}
           <div className="w-16 h-px bg-gold/40 mx-auto mt-10" />
         </div>
-      </section>
+      </BlueSection>
 
       {/* ═══════════════════════════════════════════════════════
           3. NOTRE APPROCHE — slide-in alternée gauche/droite
       ═══════════════════════════════════════════════════════ */}
       {project.process && project.process.length > 0 && (
-        <section
-          className="py-24 border-t border-gold/10 overflow-hidden"
-          style={{ backgroundColor: '#FAFAF8' }}
-        >
+        <LightSection className="py-24 border-t border-gold/10">
           {/* En-tête */}
           <div className="text-center mb-16 px-6">
             <p className="text-xs uppercase tracking-widest text-gold/60 mb-3">Notre approche</p>
@@ -443,55 +570,51 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
             </h2>
           </div>
 
-          <div ref={approcheFade.ref} className="max-w-5xl mx-auto px-6">
+          <div ref={approcheFade.ref as React.RefObject<HTMLDivElement>} className="max-w-5xl mx-auto px-6">
             <ol className="space-y-10">
               {project.process.map((step, i) => {
                 const fromLeft = i % 2 === 0;
                 return (
                   <li
                     key={i}
-                    className="flex items-start gap-8 transition-all duration-700"
+                    className="flex items-start gap-8"
                     style={{
-                      transitionDelay: `${i * 180}ms`,
+                      transition: `opacity 1.1s ease, transform 1.1s cubic-bezier(0.22, 1, 0.36, 1)`,
+                      transitionDelay: approcheFade.visible ? `${i * 300}ms` : '0ms',
                       opacity: approcheFade.visible ? 1 : 0,
                       transform: approcheFade.visible
                         ? 'translateX(0)'
-                        : `translateX(${fromLeft ? '-120px' : '120px'})`,
+                        : `translateX(${fromLeft ? '-70vw' : '70vw'})`,
                     }}
                   >
-                    {/* Numéro watermark */}
+                    {/* Numéro watermark — toujours à gauche */}
                     <span
                       className="font-serif font-bold leading-none flex-shrink-0 select-none"
                       style={{
-                        fontSize: '5rem',
-                        color: 'rgba(212,175,55,0.18)',
+                        fontSize: '6rem',
+                        color: 'rgba(212,175,55,0.20)',
                         lineHeight: 1,
-                        minWidth: '4rem',
+                        minWidth: '5rem',
                       }}
                     >
                       {i + 1}
                     </span>
-                    {/* Texte */}
-                    <p className="text-charcoal/75 text-lg leading-relaxed pt-3">{step}</p>
+                    {/* Texte — toujours aligné à gauche */}
+                    <p className="text-charcoal/80 text-xl leading-relaxed pt-4 flex-1">
+                      {step}
+                    </p>
                   </li>
                 );
               })}
             </ol>
           </div>
-        </section>
+        </LightSection>
       )}
 
       {/* ═══════════════════════════════════════════════════════
           4. LES DÉFIS — titre argent, hover zoom + liseré gold
       ═══════════════════════════════════════════════════════ */}
-      <section
-        className="relative py-24 border-t border-gold/10"
-        style={{ backgroundColor: '#0F172A' }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: perlinNoise, backgroundSize: '400px 400px', opacity: 0.18 }}
-        />
+      <BlueSection className="py-24 border-t border-gold/10">
 
         <div ref={defisFade.ref} className="relative z-10 max-w-5xl mx-auto px-6">
           {/* En-tête */}
@@ -511,7 +634,7 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
             ))}
           </div>
         </div>
-      </section>
+      </BlueSection>
 
       {/* ═══════════════════════════════════════════════════════
           5. TÉMOIGNAGE — compact, large, étoiles image
@@ -566,11 +689,8 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
       {/* ═══════════════════════════════════════════════════════
           6. LES RÉSULTATS — min 3 cartes + liste 2 colonnes
       ═══════════════════════════════════════════════════════ */}
-      <section
-        className="py-24 border-t border-gold/10"
-        style={{ backgroundColor: '#FAFAF8' }}
-      >
-        <div ref={resultsFade.ref} className="max-w-5xl mx-auto px-6">
+      <LightSection className="py-24 border-t border-gold/10">
+        <div ref={resultsFade.ref as React.RefObject<HTMLDivElement>} className="max-w-5xl mx-auto px-6">
           {/* En-tête */}
           <div className="text-center mb-14">
             <p className="text-xs uppercase tracking-widest text-gold/60 mb-3">Les résultats</p>
@@ -598,13 +718,25 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
               return (
                 <div
                   key={i}
-                  className="rounded-xl p-6 text-center border border-gold/15 flex flex-col items-center justify-center"
-                  style={{ background: 'rgba(212,175,55,0.04)' }}
+                  className="rounded-xl p-6 text-center flex flex-col items-center justify-center relative overflow-hidden"
+                  style={{
+                    backgroundColor: '#FAF6EE',
+                    backgroundImage: [
+                      `url("data:image/svg+xml,%3Csvg viewBox='0 0 700 700' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pg${i}'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.32' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pg${i})' opacity='0.38'/%3E%3C/svg%3E")`,
+                      `radial-gradient(ellipse at 15% 20%, rgba(185,145,65,0.12) 0%, transparent 50%)`,
+                      `radial-gradient(ellipse at 80% 75%, rgba(160,120,45,0.10) 0%, transparent 45%)`,
+                      `radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.06) 0%, transparent 60%)`,
+                    ].join(', '),
+                    backgroundSize: '700px 700px, 100% 100%, 100% 100%, 100% 100%',
+                    backgroundBlendMode: 'multiply, normal, normal, normal',
+                    border: '1px solid rgba(212,175,55,0.25)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 12px rgba(0,0,0,0.08)',
+                  }}
                 >
                   {num !== null ? (
                     <p className="text-4xl font-bold text-metallic-navy mb-2 leading-none">
                       <span style={{ fontSize: '1.6rem' }}>{sign}</span>
-                      {resultsFade.visible ? <AnimatedCounter target={num} /> : '0'}
+                      <AnimatedCounter target={num} trigger={resultsFade.visible} delay={i * 280} />
                       <span style={{ fontSize: '1.6rem' }}>{suffix}</span>
                     </p>
                   ) : (
@@ -632,7 +764,7 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
             ))}
           </ul>
         </div>
-      </section>
+      </LightSection>
 
       {/* ═══════════════════════════════════════════════════════
           7. CTA — fond or métallique
@@ -642,15 +774,22 @@ export const BlogArticlePage: React.FC<BlogArticlePageProps> = ({ project, onBac
           <div
             className="rounded-3xl p-10 relative overflow-hidden text-center"
             style={{
-              background: 'linear-gradient(135deg, #C9A227 0%, #F5D678 35%, #D4AF37 55%, #B8860B 80%, #D4AF37 100%)',
-              boxShadow: '0 8px 32px rgba(212,175,55,0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
+              backgroundColor: '#FAF6EE',
+              backgroundImage: [
+                `url("data:image/svg+xml,%3Csvg viewBox='0 0 700 700' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pgcta'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.32' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pgcta)' opacity='0.38'/%3E%3C/svg%3E")`,
+                `radial-gradient(ellipse at 10% 15%, rgba(185,145,65,0.14) 0%, transparent 50%)`,
+                `radial-gradient(ellipse at 85% 80%, rgba(160,120,45,0.12) 0%, transparent 45%)`,
+                `radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.08) 0%, transparent 65%)`,
+                `radial-gradient(ellipse at 75% 10%, rgba(200,170,80,0.08) 0%, transparent 40%)`,
+              ].join(', '),
+              backgroundSize: '700px 700px, 100% 100%, 100% 100%, 100% 100%, 100% 100%',
+              backgroundBlendMode: 'multiply, normal, normal, normal, normal',
+              border: '1px solid rgba(212,175,55,0.3)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 32px rgba(0,0,0,0.10)',
             }}
           >
-            <div
-              className="absolute inset-0 opacity-20 pointer-events-none"
-              style={{ backgroundImage: perlinNoise, backgroundSize: '400px 400px', mixBlendMode: 'overlay' }}
-            />
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+            {/* Filet lumineux supérieur */}
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
 
             <div className="relative z-10">
               <BookOpen size={32} className="text-charcoal mx-auto mb-4" />
